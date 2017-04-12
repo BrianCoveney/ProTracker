@@ -9,7 +9,13 @@
     -fx-font-weight: 500;
 }
 
-
+#vbPre
+{
+    -fx-background-image: url("background3.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-size: 1100 650;
+    -fx-background-position: center center;
+}
 .label_subtitle {
     -fx-font-family: "Arial";
     -fx-font-size: 18px;

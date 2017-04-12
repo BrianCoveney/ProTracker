@@ -1,9 +1,12 @@
 package ie.cit.architect.protracker.App;
 
+import com.sun.javafx.application.LauncherImpl;
 import ie.cit.architect.protracker.controller.DBController;
+import ie.cit.architect.protracker.Preloader.preloader;
 import ie.cit.architect.protracker.gui.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.application.Preloader;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -26,7 +29,30 @@ public class Mediator extends Application {
 
     private Stage primaryStage;
 
-    public static void main(String[] args){ launch(args); }
+
+    private static final int COUNT_LIMIT = 250000;
+    private static int stepCount = 1;
+
+
+    public static String STEP() {
+        return stepCount++ + ". ";
+    }
+
+    public static void main(String[] args) {
+        LauncherImpl.launchApplication(Mediator.class, preloader.class, args);
+    }
+
+    @Override
+    public void init() throws Exception {
+        System.out.println(Mediator.STEP() + "MyApplication#init (doing some heavy lifting), thread: " + Thread.currentThread().getName());
+
+        // Perform some heavy lifting (i.e. database start, check for application updates, etc. )
+        for (int i = 0; i < COUNT_LIMIT; i++) {
+            double progress = (100 * i) / COUNT_LIMIT;
+            LauncherImpl.notifyPreloader(this, new Preloader.ProgressNotification(progress));
+        }
+
+    }
 
 
     //  Swapping scenes. Ref: http://stackoverflow.com/a/14168529/5942254
