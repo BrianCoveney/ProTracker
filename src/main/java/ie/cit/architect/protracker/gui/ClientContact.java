@@ -9,12 +9,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
+import java.net.URL;
 
 /**
  * Created by Adam on 06/03/2017.
@@ -74,41 +74,31 @@ public class ClientContact
         vbO.setPadding(new Insets(1));
         vbO.setAlignment(Pos.CENTER_LEFT);
 
-        //Map info
-        Label map = new Label("Map");
-        Image map1 = new Image(this.getClass().getResource("/map.PNG").toString());
-        ImageView mapV = new ImageView(map1);
-        mapV.setFitWidth(354);
-        mapV.setFitHeight(245);
-        map.setFont(new Font("Arial", 30));
-        VBox vbMap = new VBox(map, mapV);
-        vbMap.setSpacing(15);
-        vbMap.setPadding(new Insets(1));
-        vbMap.setAlignment(Pos.TOP_RIGHT);
-
-
         VBox vb2 = new VBox(vb,vbO);
         vb2.setSpacing(15);
         vb2.setPadding(new Insets(10));
         vb2.setAlignment(Pos.TOP_LEFT);
 
-        HBox hb1 = new HBox(vb2, vbMap);
+        HBox hb1 = new HBox(vb2);
         hb1.setSpacing(150);
         hb1.setPadding(new Insets(1));
         hb1.setAlignment(Pos.CENTER);
 
         BorderPane pane = new BorderPane();
-        pane.setCenter(hb1);
+        pane.setLeft(hb1);
+        pane.setRight(new Browser());
 
         return pane;
     }
 
     public HBox homeButtonContainer()
     {
+
         Button buttonHome = new Button("Home");
         Image logo = new Image(this.getClass().getResource("/Protracker_big.png").toString());
         ImageView iview1 = new ImageView(logo);
         iview1.setFitWidth(236.25);
+
         iview1.setFitHeight(62.5);
 
         buttonHome.setOnAction(event -> {
@@ -139,7 +129,6 @@ public class ClientContact
 
     public HBox navButtonContainer()
     {
-        Button buttonStage = new Button("Back To Timeline");
         Button buttonCancel = new Button("Cancel");
         Button buttonContinue= new Button("Continue");
 
@@ -167,4 +156,29 @@ public class ClientContact
 
         return hb;
     }
+
+    public class Browser extends Region
+    {
+
+        WebView browser = new WebView();
+        final WebEngine webEngine = browser.getEngine();
+
+        public Browser() {
+
+            getStyleClass().add("browser");
+            browser.setId("browserCSS");
+            Label map = new Label("Map");
+            map.setFont(new Font("Arial", 30));
+            VBox vbMap = new VBox(map, browser);
+            vbMap.setSpacing(5);
+            vbMap.setPadding(new Insets(1 ,10,10,10));
+            vbMap.setAlignment(Pos.TOP_LEFT);
+
+            final URL urlGoogleMaps = getClass().getResource("/GoogleMapsV3.html");
+            webEngine.load(urlGoogleMaps.toExternalForm());
+            webEngine.setJavaScriptEnabled(true);
+            getChildren().add(vbMap);
+        }
+    }
+
 }

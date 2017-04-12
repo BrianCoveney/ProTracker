@@ -16,6 +16,14 @@
     -fx-background-size: 1100 650;
     -fx-background-position: center center;
 }
+
+#browserCSS
+{
+    -fx-pref-width: 400px;
+    -fx-pref-height: 300px;
+
+}
+
 .label_subtitle {
     -fx-font-family: "Arial";
     -fx-font-size: 18px;
