@@ -1,10 +1,8 @@
 package ie.cit.architect.protracker.gui;
 
 import ie.cit.architect.protracker.App.Mediator;
-import ie.cit.architect.protracker.controller.Controller;
 import ie.cit.architect.protracker.controller.DBController;
-import ie.cit.architect.protracker.model.EmployeeUser;
-import ie.cit.architect.protracker.model.IUser;
+import ie.cit.architect.protracker.controller.UserController;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -15,7 +13,7 @@ import javafx.util.Pair;
 
 import java.util.Optional;
 
-//import ie.cit.architect.protracker.controller.Controller;
+//import ie.cit.architect.protracker.userController.UserController;
 
 /**
  * Created by brian on 3/2/2017.
@@ -29,6 +27,7 @@ public class CustomArchitectDialog
     private String userPass;
     private String passwordTextField;
     private String emailTextField;
+    private UserController userController;
 
 
 
@@ -130,18 +129,19 @@ public class CustomArchitectDialog
 
         Platform.runLater(() -> {
 
-            IUser employeeUser = new EmployeeUser(emailTextField, passwordTextField);
-
-            if (!employeeUser.validateEmailCredentials(employeeUser.getEmailAddress())) {
+            if (!UserController.getInstance().isEmployeeUserEmailValid(emailTextField)) {
                 createEmailErrorDialog();
                 mediator.changeToArchitectCustomDialog();
-            } else if (!employeeUser.validatePasswordCredentials(employeeUser.getPassword())) {
+            }
+            else if(!UserController.getInstance().isUserPasswordValid(passwordTextField)) {
                 createPasswordErrorDialog();
                 mediator.changeToArchitectCustomDialog();
-            } else {
+            }
+            else {
                 Platform.runLater(() -> addUserToDB());
                 mediator.changeToArchitectMenuScene();
             }
+
         });
 
     }
@@ -167,13 +167,11 @@ public class CustomArchitectDialog
     }
 
 
+    // Following the MVC Pattern - we are delegating creation of objects to the controller.
+    // The Controller create a User with values passed into it from this View class.
     public void addUserToDB() {
 
-        IUser employeeUser = Controller.getInstance().createEmployeeUser(userEmail, userPass);
-
-        if (employeeUser != null) {
-            DBController.getInstance().addUser((EmployeeUser) employeeUser);
-        }
+        DBController.getInstance().addUser(userEmail, userPass);
 
         DBController.getInstance().saveEmployeeUser();
 

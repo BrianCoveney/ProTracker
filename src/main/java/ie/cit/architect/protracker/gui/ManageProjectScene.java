@@ -37,9 +37,9 @@ public class ManageProjectScene {
     private String projectName;
     private static final String CURR_DIR = "src/main/resources";
     private static final String TXT_FILE_DESC = "txt files (*.txt)";
-    private static final String PDF_FILE_DESC = "pdf files (*.pdf)";
+    private static final String PDF_FILE_DESC = "PdfInvoice files (*.PdfInvoice)";
     private static final String TXT_FILE_EXT = "*.txt";
-    private static final String PDF_FILE_EXTENSION = "*.pdf";
+    private static final String PDF_FILE_EXTENSION = "*.PdfInvoice";
     private VBox vBoxMiddlePane;
     private ObservableList<CheckBox> checkBoxList;
     private ObservableList<Label> labelList;
@@ -233,7 +233,7 @@ public class ManageProjectScene {
 
 
     // Delete
-    // 'deleteButton' listener which calls the Controller to remove the selected project from the database
+    // 'deleteButton' listener which calls the UserController to remove the selected project from the database
     private void deleteProject() {
         DBController.getInstance().deleteProject(getProjectName());
     }

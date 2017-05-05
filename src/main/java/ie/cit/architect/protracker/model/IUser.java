@@ -13,7 +13,4 @@ public interface IUser {
 
     void setName(String name);
 
-    boolean validateEmailCredentials(String email);
-
-    boolean validatePasswordCredentials(String password);
 }

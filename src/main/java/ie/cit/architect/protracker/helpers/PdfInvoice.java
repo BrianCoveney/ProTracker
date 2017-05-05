@@ -21,16 +21,24 @@ import java.util.Date;
 /**
  * Created by brian on 15/04/17.
  */
-public class CreatePDF {
+public class PdfInvoice {
 
     private static final String SEPARATOR = File.separator;
-    private static final String PATH_TO_DESKTOP = System.getProperty("user.home") + SEPARATOR + "Desktop" + SEPARATOR + "invoice.pdf";
-   //private static final String LOGO = "/home/brian/workspace/pdf/src/main/resources/companylogo.png";
+    private static final String PATH_TO_DESKTOP = System.getProperty("user.home") + SEPARATOR + "Desktop" + SEPARATOR + "invoice.PdfInvoice";
+   //private static final String LOGO = "/home/brian/workspace/PdfInvoice/src/main/resources/companylogo.png";
     private static final String LOGO = "./src/main/resources/companylogo.png";
     private static Date mDate;
 
 
-    public static void createPdf() throws IOException {
+    private PdfInvoice() {
+    }
+
+    // static factory method
+    public static PdfInvoice getInstance() {
+        return new PdfInvoice();
+    }
+
+    public void createPdfDocument() throws IOException {
 
         File file = new File(PATH_TO_DESKTOP);
         file.getParentFile().mkdirs();

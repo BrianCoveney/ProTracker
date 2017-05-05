@@ -127,7 +127,7 @@ public class MongoDBPersistor implements IPersistor {
     public void writeEmployeeUsers(EmployeeList employeeUsers) {
         Document document = new Document();
         try {
-            for (IUser currUser : employeeUsers.getEmployeeUserUsers()) {
+            for (IUser currUser : employeeUsers.getEmployeeUsers()) {
                 document.put("email", currUser.getEmailAddress());
                 document.put("password", currUser.getPassword());
             }

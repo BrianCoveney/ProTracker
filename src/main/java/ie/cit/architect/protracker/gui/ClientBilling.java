@@ -2,7 +2,7 @@ package ie.cit.architect.protracker.gui;
 
 import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.helpers.Consts;
-import ie.cit.architect.protracker.helpers.CreatePDF;
+import ie.cit.architect.protracker.helpers.PdfInvoice;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -62,8 +62,8 @@ public class ClientBilling
         vb.setPadding(new Insets(10));
         vb.setAlignment(Pos.TOP_LEFT);
 
-        //Invoice Details
-        Label invoice = new Label("Invoice Preview");
+        //PdfInvoice Details
+        Label invoice = new Label("PdfInvoice Preview");
         invoice.setFont(new Font("Arial", 30));
         VBox vbIn = new VBox(invoice);
         vbIn.setSpacing(15);
@@ -120,7 +120,7 @@ public class ClientBilling
         Button buttonCancel = new Button("Cancel");
         Button buttonContinue= new Button("Continue");
         Button buttonChat = new Button("Chat");
-        Button buttonSaveInvoice = new Button("Save Invoice");
+        Button buttonSaveInvoice = new Button("Save PdfInvoice");
 
         buttonChat.setOnAction(event -> {
             try {
@@ -133,8 +133,8 @@ public class ClientBilling
         buttonSaveInvoice.setOnAction(event -> {
             try {
                 try {
-                    CreatePDF.createPdf();
-                    MessageBox.show("Invoice Saved to Desktop", "Saved");
+                    PdfInvoice.getInstance().createPdfDocument();
+                    MessageBox.show("PdfInvoice Saved to Desktop", "Saved");
                 }catch (IOException e) {
                     e.printStackTrace();
                 }

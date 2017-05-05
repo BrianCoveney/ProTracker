@@ -54,10 +54,15 @@ public class DBController {
     }
 
 
-    public EmployeeUser addUser(EmployeeUser user) {
-        this.employeeList.add(user);
-        return user;
+
+    public void addUser(String email, String password) {
+
+        IUser employeeUser =
+                UserController.getInstance().createEmployeeUser(email, password);
+
+        this.employeeList.add(employeeUser);
     }
+
 
     public ClientUser addUser(ClientUser user) {
         this.clientList.add(user);

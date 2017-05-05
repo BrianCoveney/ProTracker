@@ -1,13 +1,12 @@
 package ie.cit.architect.protracker.gui;
 
 import ie.cit.architect.protracker.App.Mediator;
-import ie.cit.architect.protracker.controller.Controller;
 import ie.cit.architect.protracker.controller.DBController;
+import ie.cit.architect.protracker.controller.UserController;
 import ie.cit.architect.protracker.model.ClientUser;
 import ie.cit.architect.protracker.model.IUser;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
@@ -81,26 +80,6 @@ public class CustomClientDialog
         gridPane.getColumnConstraints().addAll(col1, col2);
 
 
-        // Enable/Disable login button depending on whether a username was entered.
-        Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
-
-        //TODO : change to true and uncomment code after testing
-        loginButton.setDisable(false);
-        // disable the Login button and set prompt, if user enters incorrect email address
-        //Off for testing
-//        textFieldEmail.textProperty().addListener((observable, oldValue, newValue) -> {
-//
-//            if (!(newValue.trim().matches(Consts.VALID_EMAIL_REGEX))) {
-//                loginButton.setDisable(true);
-//                labelCheckEmail.setText("enter a valid email"); // display error message
-//                labelCheckEmail.setTextFill(Color.RED);
-//            } else {
-//                loginButton.setDisable(false);
-//                labelCheckEmail.setText("");
-//            }
-//        });
-
-
         dialog.getDialogPane().setContent(gridPane);
 
         // colour the dialogs header
@@ -150,13 +129,11 @@ public class CustomClientDialog
 
         Platform.runLater(() -> {
 
-            IUser user = new ClientUser(emailTextField, passwordTextField);
-
-            if (!user.validateEmailCredentials(user.getEmailAddress())) {
+            if (!UserController.getInstance().isClientUserEmailValid(emailTextField)) {
                 createEmailErrorDialog();
                 mediator.changeToClientCustomDialog();
             }
-            else if (!user.validatePasswordCredentials(user.getPassword())) {
+            else if(!UserController.getInstance().isUserPasswordValid(passwordTextField)) {
                 createPasswordErrorDialog();
                 mediator.changeToClientCustomDialog();
             }
@@ -164,7 +141,8 @@ public class CustomClientDialog
                 Platform.runLater(() -> addUserToDB());
                 mediator.changeToClientMenuScene();
             }
-       });
+
+        });
 
     }
 
@@ -191,7 +169,7 @@ public class CustomClientDialog
 
     public void addUserToDB() {
 
-        IUser clientUser = Controller.getInstance().createClientUser(userEmail, userPass);
+        IUser clientUser = UserController.getInstance().createClientUser(userEmail, userPass);
 
         if (clientUser != null) {
             DBController.getInstance().addUser((ClientUser) clientUser);

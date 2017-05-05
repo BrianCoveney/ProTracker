@@ -31,23 +31,6 @@ public class EmployeeUser implements IUser{
     }
 
 
-    @Override
-    public boolean validateEmailCredentials(String email) {
-        if(emailAddress.equals(Consts.MANAGER_EMAIL_1) || emailAddress.equals(Consts.MANAGER_EMAIL_2)) {
-            return true;
-        }
-        return false;
-    }
-
-
-    @Override
-    public boolean validatePasswordCredentials(String password) {
-        if (password.equals(Consts.USER_PASS)) {
-            return true;
-        }
-        return false;
-    }
-
 
     @Override
     public String getName() {

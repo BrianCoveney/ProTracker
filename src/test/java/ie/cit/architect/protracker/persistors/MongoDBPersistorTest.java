@@ -161,7 +161,7 @@ public class MongoDBPersistorTest {
         // Here we are writing to our test database.
         Document document = new Document();
         try {
-            for (IUser currEmployeeUser : employeeList.getEmployeeUserUsers()) {
+            for (IUser currEmployeeUser : employeeList.getEmployeeUsers()) {
                 document.put("email", currEmployeeUser.getEmailAddress());
                 document.put("password", currEmployeeUser.getPassword());
             }

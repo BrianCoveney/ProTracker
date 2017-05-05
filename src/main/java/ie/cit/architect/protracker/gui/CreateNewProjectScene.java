@@ -2,7 +2,7 @@ package ie.cit.architect.protracker.gui;
 
 import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.controller.DBController;
-import ie.cit.architect.protracker.controller.Controller;
+import ie.cit.architect.protracker.controller.UserController;
 import ie.cit.architect.protracker.helpers.Consts;
 import ie.cit.architect.protracker.model.IProject;
 import ie.cit.architect.protracker.model.Project;
@@ -12,10 +12,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -137,6 +136,9 @@ public class CreateNewProjectScene {
                     createDirectories();
         });
 
+        VBox.setMargin(buttonCreate, new Insets(40, 37.5, 0, 80));
+
+
         // add controls to VBox
         vBox.getChildren().addAll(lbProjectName, tfProjectName, lbProjectAuthor, tfProjectAuthor,
                 lbProjectClient, tfProjectClient, lbProjectLocation, tfProjectLocation, buttonCreate);
@@ -147,7 +149,7 @@ public class CreateNewProjectScene {
 
     private VBox createMiddlePane() {
         VBox vBox = new VBox();
-        vBox.getStyleClass().add("hbox_middle");
+        vBox.getStyleClass().add("hbox_right");
         vBox.setMinWidth(Consts.PANE_WIDTH);
         Label label = new Label("Select folders to create:");
         vBox.getChildren().add(label);
@@ -196,11 +198,9 @@ public class CreateNewProjectScene {
 
     // @link { Ref: http://stackoverflow.com/a/23512831/5942254 }
     private void createCheckboxArray() {
-
         List<String> text = Arrays.asList(
                 "SiteMaps", "ProposedDrawings", "StructuralDrawings", "SupplierDetails",
                 "FireDrawings", "Images", "Exports", "Imports", "Documents", "Emails");
-
 
         for (int i = 0; i < checkboxList.length; i++) {
             checkboxList[i] = new CheckBox((i + 1) + " " + text.get(i));
@@ -209,24 +209,18 @@ public class CreateNewProjectScene {
 
 
     private VBox createRightPane() {
-
-
-        Label label = new Label("Description:");
-
         Button buttonOpen = new Button("Open");
         buttonOpen.setOnAction(event -> openDocument());
 
-        TextArea textArea = new TextArea();
-        textArea.setPrefWidth(200);
-
         VBox vBox = new VBox();
-        vBox.getStyleClass().add("hbox_right");
+        vBox.getStyleClass().add("hbox_middle");
         vBox.setMinWidth(Consts.PANE_WIDTH);
-        VBox.setMargin(label, new Insets(30, 0, 0, 0));
-        vBox.getChildren().addAll(buttonOpen, textArea);
+        VBox.setMargin(buttonOpen, new Insets(200, 0, 0, 100));
+        vBox.getChildren().addAll(buttonOpen);
 
         return vBox;
     }
+
 
 
     private AnchorPane createBottomPane() {
@@ -258,7 +252,7 @@ public class CreateNewProjectScene {
 
     /**
      * Button 'Continue' method listener
-     * that uses the Controller class create and populate the Project object
+     * that uses the UserController class create and populate the Project object
      * @see CreateNewProjectScene#createBottomPane
      */
     private void createProject() {
@@ -269,7 +263,7 @@ public class CreateNewProjectScene {
         // values from TextFields stored as strings
         getUserInput();
 
-        project = Controller.getInstance().createProject(
+        project = UserController.getInstance().createProject(
                 projectName, projectAuthor, projectLocation, projectClient);
 
         addProjectToDB();
