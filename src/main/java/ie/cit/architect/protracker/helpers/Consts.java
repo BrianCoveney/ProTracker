@@ -18,6 +18,7 @@ public final class Consts {
     public static final String CLIENT_EMAIL_1 = "ben@email.com";
     public static final String CLIENT_EMAIL_2 = "ger@email.com";
     public static final String CLIENT_EMAIL_3 = "ken@email.com";
+    public static final String CLIENT_EMAIL_4 = "adam@email.com";
     public static final String USER_PASS = "pass";
 
 

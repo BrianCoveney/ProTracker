@@ -1,6 +1,6 @@
 .root{
     -fx-background-image: url("background5.png");
-    -fx-background-repeat: stretch;
+    -fx-background-repeat: fill;
     -fx-background-size: 1100 650;
     -fx-background-position: center center;
     -fx-font-size: 14px;

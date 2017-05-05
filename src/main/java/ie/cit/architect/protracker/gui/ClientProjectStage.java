@@ -43,7 +43,7 @@ public class ClientProjectStage
     {
         BorderPane pane = new BorderPane();
         pane.setTop(homeButtonContainer());
-        pane.setCenter(viewCurrentStage());
+        pane.setCenter(createStage());
         pane.setBottom(navButtonContainer());
         Scene scene = new Scene(pane, Consts.APP_WIDTH, Consts.APP_HEIGHT);
         scene.getStylesheets().add("/stylesheet.css");
@@ -52,8 +52,21 @@ public class ClientProjectStage
         stage.show();
     }
 
+    private Pane createStage()
+    {
+        Label pTimeline = new Label("View Current Stage");
 
-    private Group viewCurrentStage()
+        vb = new VBox(pTimeline);
+        vb.setSpacing(15);
+        vb.setPadding(new Insets(1));
+        vb.setAlignment(Pos.CENTER);
+
+        BorderPane pane = new BorderPane();
+        pane.setCenter(vb);
+
+        return pane;
+    }
+   /* private Group viewCurrentStage()
     {
         // define the X Axis
         CategoryAxis xAxis = new CategoryAxis();
@@ -103,7 +116,7 @@ public class ClientProjectStage
         Group groupBarChart = new Group(barChart);
 
         return groupBarChart;
-    }
+    }*/
 
     public HBox homeButtonContainer()
     {

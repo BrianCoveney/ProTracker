@@ -39,7 +39,7 @@ public class CustomClientDialog
 
         // Create the custom dialog.
         dialog = new Dialog<>();
-        dialog.setTitle("Login ClientUser");
+        dialog.setTitle("Login Client User");
         dialog.setHeaderText("Please Sign In");
 
         // Set the icon (must be included in the project).
@@ -137,8 +137,6 @@ public class CustomClientDialog
             userEmail = emailPassword.getKey();
             userPass = emailPassword.getValue();
         });
-
-
 
 
 
