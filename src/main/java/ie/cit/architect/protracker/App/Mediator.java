@@ -24,6 +24,7 @@ public class Mediator extends Application {
     private NavigationPane navigationPane;
     private CustomArchitectDialog customArchitectDialog;
     private CustomClientDialog customClientDialog;
+    private ViewProjectTimeline viewProjectTimeline;
     private ClientViewProjectTimeline clientViewProjectTimeline;
     private ClientMessages clientMessages;
     private ClientProjectStage clientProjectStage;
@@ -66,6 +67,7 @@ public class Mediator extends Application {
         navigationPane = new NavigationPane(this);
         customArchitectDialog = new CustomArchitectDialog(this);
         customClientDialog = new CustomClientDialog(this);
+        viewProjectTimeline = new ViewProjectTimeline(this);
         clientViewProjectTimeline = new ClientViewProjectTimeline(this);
         clientMessages = new ClientMessages(this);
         clientProjectStage = new ClientProjectStage(this);
@@ -106,6 +108,8 @@ public class Mediator extends Application {
     public void changeToArchitectCustomDialog() { customArchitectDialog.signInArchitectDialog(); }
 
     public void changeToClientCustomDialog() { customClientDialog.signInClientDialog(); }
+
+    public void changeToViewProjectTimeline() { viewProjectTimeline.start(primaryStage); }
 
     public void changeToHomeScene()  {
         try {

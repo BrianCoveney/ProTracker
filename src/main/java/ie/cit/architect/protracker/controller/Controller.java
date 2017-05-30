@@ -33,6 +33,12 @@ public class Controller {
         return instance;
     }
 
+    public Project passName(String name) {
+        Project p = new Project();
+        p.setName(name);
+
+        return p;
+    }
 
     public Project createProject(String name, String author, String location, String client, double fee) {
         return new Project(name, author, location, client, fee);

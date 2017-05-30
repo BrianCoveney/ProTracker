@@ -2,28 +2,21 @@ package ie.cit.architect.protracker.gui;
 
 import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.helpers.Consts;
+import javafx.animation.PathTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.stage.Stage;
-import java.util.List;
-import javafx.animation.PathTransition;
-import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.util.Arrays;
 
 /**
  * Created by Adam on 04/03/2017.
@@ -54,7 +47,7 @@ public class ClientViewProjectTimeline
     private Pane createProjectTimeline()
     {
         Group rootGroup = new Group();
-        String projName = ManageProjectScene.getClientProjName();
+        String projName = ViewProjectTimeline.getClientProjName();
         Label Title = new Label();
         if(projName == null)
         {
@@ -86,7 +79,7 @@ public class ClientViewProjectTimeline
 
     private Path generateStraightPath()
     {
-        String stage = ManageProjectScene.getAdjustPath();
+        String stage = ViewProjectTimeline.getAdjustPath();
         final Path path = new Path();
         path.getElements().add(new MoveTo(20,200));
         if(stage=="Design")

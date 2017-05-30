@@ -49,9 +49,9 @@ public class ClientBilling
     private Pane createClientBilling()
     {
         //Account Details
-        String projName = ManageProjectScene.getClientProjName();
-        String name = ManageProjectScene.getClientName();
-        double fee = ManageProjectScene.getClientProjFee();
+        String projName = ViewProjectTimeline.getClientProjName();
+        String name = ViewProjectTimeline.getClientName();
+        double fee = ViewProjectTimeline.getClientProjFee();
         Label status = new Label();
         status.setManaged(false);
         status.setVisible(false);

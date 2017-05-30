@@ -4,7 +4,6 @@ import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.controller.Controller;
 import ie.cit.architect.protracker.controller.DBController;
 import ie.cit.architect.protracker.helpers.Consts;
-import ie.cit.architect.protracker.model.IProject;
 import ie.cit.architect.protracker.model.Project;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -14,7 +13,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -30,7 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,7 +54,7 @@ public class CreateNewProjectScene {
     private TextField tfProjectFee;
     private String projectName, projectDate, projectAuthor, projectLocation, projectClient;
     private double projectFee;
-    private IProject project;
+    private Project project;
     private Mediator mediator;
 
 
@@ -178,8 +179,8 @@ public class CreateNewProjectScene {
             Files.createDirectories(path1);
 
             if (!projectName.isEmpty()) {
-                for (int i = 0; i < directoryArrayList.size(); i++) {
-                    subDirectory = directoryArrayList.get(i);
+                for (String dir : directoryArrayList) {
+                    subDirectory = dir;
                     Path path2 = Paths.get(PATH_TO_DESKTOP + projectName + DOUBLE_FILE_SEP + subDirectory);
                     Files.createDirectories(path2);
                 }
@@ -216,9 +217,11 @@ public class CreateNewProjectScene {
 
     private VBox createRightPane() {
         Button buttonOpen = new Button("Open");
+        buttonOpen.setMinWidth(150);
         buttonOpen.setOnAction(event -> openDocument());
 
         Button buttonInvoice = new Button("Create Invoice");
+        buttonInvoice.setMinWidth(150);
         buttonInvoice.setOnAction(event -> createInvoice());
 
         VBox vBox = new VBox();
@@ -226,7 +229,7 @@ public class CreateNewProjectScene {
         vBox.setMinWidth(Consts.PANE_WIDTH);
         vBox.setPadding(new Insets(1));
         vBox.setAlignment(Pos.CENTER);
-        vBox.setSpacing(25);
+        vBox.setSpacing(100);
 
         vBox.getChildren().addAll(buttonOpen, buttonInvoice);
 
@@ -289,7 +292,7 @@ public class CreateNewProjectScene {
             Platform.runLater(() -> {
 
                 if (project != null) {
-                    DBController.getInstance().addProject((Project) project);
+                    DBController.getInstance().addProject(project);
                 }
 
                 DBController.getInstance().saveProject();
