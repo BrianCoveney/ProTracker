@@ -33,37 +33,33 @@ import java.util.List;
  */
 public class ViewProjectTimeline {
 
-    static String stage;
-    static String pName;
-    static String cName;
-    static double cFee;
+    private static String stage;
+    private static String pName;
+    private static String cName;
+    private static double cFee;
 
+    private static String projectName;
 
-    private String projName, projectName;
+    private String projName;
     private String projClientName;
-    private double projFee;
     private double yValueDesignFee;
     private double yValuePlanningFee;
     private double yValueTenderFee;
     private double yValueConstructionFee;
-    private Button buttonDesign;
-    private ManageProjectScene manageProjectScene;
-
-
-
+    private double projFee;
     private Mediator mediator;
-
 
     public ViewProjectTimeline(Mediator mediator) {
         this.mediator = mediator;
     }
 
-    public ViewProjectTimeline(ManageProjectScene manageProjectScene) {
-        this.manageProjectScene = manageProjectScene;
+    public ViewProjectTimeline(){}
 
-    }
+
+
 
     public void start(Stage stage) {
+
         BorderPane borderPane = new BorderPane();
         borderPane.setBottom(createBottomPaneTimLine());
         borderPane.setCenter(createBarChart());
@@ -78,12 +74,12 @@ public class ViewProjectTimeline {
 
 
 
+
+
     private VBox createLeftBillingPane()
     {
         VBox vBox = new VBox();
-
-
-        buttonDesign = new Button("Design Invoice");
+        Button buttonDesign = new Button("Design Invoice");
         Button buttonPlanning = new Button("Planning Invoice");
         Button buttonTender = new Button("Tender Invoice");
         Button buttonConstruction = new Button("Construction Invoice");
@@ -125,26 +121,29 @@ public class ViewProjectTimeline {
 
 
 
-    private String getSelectedProject() {
-        manageProjectScene = new ManageProjectScene();
-        projectName = manageProjectScene.getSelectedProject();
+    public String getProjectName() {
         return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
 
     private Group createBarChart() {
 
+        System.out.println(getProjectName());
 
         //** find the project in the database using the project name
         Project project = DBController.getInstance()
-                .readProjectDetails(getSelectedProject());
+                .readProjectDetails(getProjectName());
 
-
-        projName = project.getName();
+        if(project != null) {
+            projName = project.getName();
             // this 'find' will also return the full mongo document associated with the project name
-        projFee = project.getFee();
-        projClientName = project.getClientName();
-
+            projFee = project.getFee();
+            projClientName = project.getClientName();
+        }
 
         // define the X Axis
         CategoryAxis xAxis = new CategoryAxis();

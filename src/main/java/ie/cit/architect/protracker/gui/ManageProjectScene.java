@@ -27,8 +27,6 @@ import java.util.Optional;
  */
 public class ManageProjectScene {
 
-
-
     private String projectName, selectedProjectName, selectedProjectClient;
     private double selectedProjectFee, doubleDialogInput;
     private static final String FILE_SEP = File.separator;
@@ -37,12 +35,10 @@ public class ManageProjectScene {
     private VBox vBoxMiddlePane;
     private ObservableList<CheckBox> checkBoxList;
     private ObservableList<Label> labelList;
-    private Button buttonDelete, buttonRename, buttonDesign;
-    private Label labelDate;
+    private Button buttonRename;
     private String editDialogInput;
-    private HBox hBoxProject;
-    private Stage window;
-    private static String selectedProject;
+    private ViewProjectTimeline viewProjectTimeline;
+
 
 
     private Mediator mediator;
@@ -51,21 +47,25 @@ public class ManageProjectScene {
         this.mediator = mediator;
         checkBoxList = FXCollections.observableArrayList();
         labelList = FXCollections.observableArrayList();
+        viewProjectTimeline = new ViewProjectTimeline();
     }
 
 
-    public ManageProjectScene() { }
+    public ManageProjectScene(){}
+
 
 
     public void start(Stage stage) {
 
-        window = stage;
+        Stage window = stage;
 
         BorderPane borderPane = new BorderPane();
         borderPane.setLeft(createLeftPane());
         borderPane.setCenter(createMiddlePane());
         borderPane.setRight(createRightPane());
         borderPane.setBottom(createBottomPane());
+
+
 
         Scene scene = new Scene(
                 borderPane,
@@ -78,34 +78,44 @@ public class ManageProjectScene {
     }
 
 
+    private String getProjectName() {
+        for (CheckBox checkBox : checkBoxList) {
+            checkBox.setOnAction(event -> {
+                projectName = checkBox.getText();
+                buttonRename.setDisable(false);
+            });
+        }
+        return projectName;
+    }
 
 
     private VBox createRightPane() {
-        VBox vBox = new VBox();
+
+        Button buttonViewStage = new Button("View Stage");
+        buttonViewStage.setOnAction(event -> {
+
+
+            viewProjectTimeline.setProjectName(getProjectName());
+
+            Platform.runLater(() ->{
+                mediator.changeToViewProjectTimeline();
+
+            });
+        });
 
 
         Button changeFee = new Button("Change Fee");
         changeFee.setOnAction(event -> {
-            selectedProject();
+
             editBilling();
-        });;
-
-
-        Button buttonViewStage = new Button("View Stage");
-        buttonViewStage.setOnAction(event -> {
-            selectedProject = projectName;
-            Platform.runLater(() ->{
-                    mediator.changeToViewProjectTimeline();
-
-            });
-         });
+        });
 
 
         buttonRename = new Button("Rename");
         buttonRename.setOnAction(event -> updateNameDialog());
         buttonRename.setDisable(true);
 
-        buttonDelete = new Button("Delete");
+        Button buttonDelete = new Button("Delete");
         buttonDelete.setOnAction(event -> {
             deleteProject();
             removeControlsFromScrollPane();
@@ -122,6 +132,7 @@ public class ManageProjectScene {
 
         Label labelOperations = new Label("Operations:");
 
+        VBox vBox = new VBox();
         VBox.setMargin(labelOperations, new Insets(10, 0, 50, 10));
 
         // add controls to VBox
@@ -174,10 +185,10 @@ public class ManageProjectScene {
             CheckBox checkBox = new CheckBox(project.getName());
             checkBoxList.add(checkBox);
 
-            labelDate = new Label(project.getFormattedDate());
+            Label labelDate = new Label(project.getFormattedDate());
             labelList.add(labelDate);
 
-            hBoxProject = new HBox();
+            HBox hBoxProject = new HBox();
             labelDate.getStyleClass().add("label_padding");
             checkBox.getStyleClass().add("checkbox_padding");
             hBoxProject.getChildren().addAll(checkBox, labelDate);
@@ -187,34 +198,17 @@ public class ManageProjectScene {
     }
 
 
-    public String getProjectName() {
-            for (CheckBox checkBox : checkBoxList) {
-                checkBox.setOnAction(event -> {
-                    projectName = checkBox.getText();
-                });
-            }
-        return projectName;
-    }
 
 
-    // to be used in ViewProjectTimeline scene
-    public String getSelectedProject() {
-        return selectedProject;
-    }
 
-
-    public Project selectedProject() {
-
+    private void selectedProject() {
         String name = getProjectName();
-
         // read the checkbox selected project from the db
         Project project = DBController.getInstance().readProjectDetails(name);
 
         selectedProjectName = project.getName();
         selectedProjectClient = project.getClientName();
         selectedProjectFee = project.getFee();
-
-        return project;
     }
 
 
@@ -232,7 +226,7 @@ public class ManageProjectScene {
     }
 
 
-    public Double updateFeeDialog() {
+    private Double updateFeeDialog() {
         javafx.scene.control.Dialog dialog = new TextInputDialog();
         dialog.setTitle("Project Fee");
         dialog.setHeaderText("Enter the new project fee");
@@ -247,16 +241,15 @@ public class ManageProjectScene {
 
 
 
-    private Project getProjectByName() {
+    public Project getProjectByName() {
         for(CheckBox checkBox : checkBoxList) {
             checkBox.setOnAction(event -> {
-                projectName =  checkBox.getText();
-                buttonRename.setDisable(false);
 
+                projectName =  checkBox.getText();
             });
         }
         Project project = new Project();
-        project.setName(projectName);
+        project.setName(getProjectName());
 
         return project;
     }
@@ -294,7 +287,7 @@ public class ManageProjectScene {
 
 
     // Update
-    private void editProjectName() { DBController.getInstance().updateProjectName(projectName, editDialogInput); }
+    private void editProjectName() { DBController.getInstance().updateProjectName(getProjectName(), editDialogInput); }
 
 
 
@@ -304,18 +297,20 @@ public class ManageProjectScene {
     private void deleteProject() {
         DBController.getInstance().deleteProject(getProjectByName());
 
-        File file = new File(PATH_TO_DESKTOP + FILE_SEP + projectName);
+        File file = new File(PATH_TO_DESKTOP + FILE_SEP + getProjectName());
         deleteDir(file);
     }
 
 
-    public static boolean deleteDir(File dir) {
+    private static boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i=0; i<children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
+            if(children != null) {
+                for (String aChildren : children) {
+                    boolean success = deleteDir(new File(dir, aChildren));
+                    if (!success) {
+                        return false;
+                    }
                 }
             }
         }
@@ -333,6 +328,8 @@ public class ManageProjectScene {
         VBox.setMargin(label, new Insets(10, 0, 20, 10));
 
         TextField textField = new TextField();
+
+
 
         VBox.setMargin(textField, new Insets(10, 10, 0, 10));
 

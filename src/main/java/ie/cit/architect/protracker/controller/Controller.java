@@ -98,17 +98,13 @@ public class Controller {
 
 
     public void editBilling(String projectName, String projectClient, double fee) {
-
         PdfInvoice.getInstance().editPdf(projectName, projectClient, fee);
-
     }
 
 
     public void createDesignInvoice(String projectName, String projectClient, double fee) {
         PdfInvoice.getInstance().sendDesignInvoice(projectName, projectClient, fee);
-
     }
-
 
 
 

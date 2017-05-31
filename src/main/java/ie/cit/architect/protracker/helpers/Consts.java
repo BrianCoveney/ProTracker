@@ -13,7 +13,7 @@ public final class Consts {
 
     // ref: http://howtodoinjava.com/regex/java-regex-validate-email-address/
     public static final String VALID_EMAIL_REGEX = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
-    public static final String MANAGER_EMAIL_1 = "der@email.com";
+    public static final String MANAGER_EMAIL_1 = "der";
     public static final String MANAGER_EMAIL_2 = "mars@email.com";
     public static final String MANAGER_EMAIL_3 = "georgia@email.com";
     public static final String CLIENT_EMAIL_1 = "ben";
