@@ -131,5 +131,27 @@ public class Mediator extends Application {
     public void changeToClientContact() throws Exception {clientContact.start(primaryStage);}
 
 
+    public void passProjectName(String projectName) {
+        viewProjectTimeline.setProjectName(projectName);
+    }
+
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

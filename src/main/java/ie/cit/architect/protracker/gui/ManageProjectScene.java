@@ -37,44 +37,12 @@ public class ManageProjectScene {
     private ObservableList<Label> labelList;
     private Button buttonRename;
     private String editDialogInput;
-    private ViewProjectTimeline viewProjectTimeline;
-
-
-
     private Mediator mediator;
 
     public ManageProjectScene(Mediator mediator) {
         this.mediator = mediator;
         checkBoxList = FXCollections.observableArrayList();
         labelList = FXCollections.observableArrayList();
-        viewProjectTimeline = new ViewProjectTimeline();
-    }
-
-
-    public ManageProjectScene(){}
-
-
-
-    public void start(Stage stage) {
-
-        Stage window = stage;
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setLeft(createLeftPane());
-        borderPane.setCenter(createMiddlePane());
-        borderPane.setRight(createRightPane());
-        borderPane.setBottom(createBottomPane());
-
-
-
-        Scene scene = new Scene(
-                borderPane,
-                Consts.APP_WIDTH + 50, Consts.APP_HEIGHT);
-
-        scene.getStylesheets().add("/stylesheet.css");
-        window.setScene(scene);
-        window.setTitle(Consts.APPLICATION_TITLE + " Manage project");
-        window.show();
     }
 
 
@@ -94,8 +62,9 @@ public class ManageProjectScene {
         Button buttonViewStage = new Button("View Stage");
         buttonViewStage.setOnAction(event -> {
 
-
-            viewProjectTimeline.setProjectName(getProjectName());
+            // using the mediator to pass a value between classes
+            // this removes the need for static class variables
+            mediator.passProjectName(getProjectName());
 
             Platform.runLater(() ->{
                 mediator.changeToViewProjectTimeline();
@@ -106,10 +75,9 @@ public class ManageProjectScene {
 
         Button changeFee = new Button("Change Fee");
         changeFee.setOnAction(event -> {
-
+            selectedProject();
             editBilling();
         });
-
 
         buttonRename = new Button("Rename");
         buttonRename.setOnAction(event -> updateNameDialog());
@@ -121,9 +89,7 @@ public class ManageProjectScene {
             removeControlsFromScrollPane();
         });
 
-        ObservableList<Button> buttonList =
-                FXCollections.observableArrayList(changeFee, buttonViewStage, buttonRename, buttonDelete);
-
+        ObservableList<Button> buttonList = FXCollections.observableArrayList(changeFee, buttonViewStage, buttonRename, buttonDelete);
         for (Button button : buttonList) {
             button.setFocusTraversable(false);
             button.setMinWidth(150);
@@ -131,13 +97,27 @@ public class ManageProjectScene {
         }
 
         Label labelOperations = new Label("Operations:");
-
         VBox vBox = new VBox();
         VBox.setMargin(labelOperations, new Insets(10, 0, 50, 10));
-
-        // add controls to VBox
         vBox.getChildren().addAll(labelOperations, changeFee, buttonViewStage, buttonRename, buttonDelete);
         return vBox;
+    }
+
+
+    public void start(Stage stage) {
+        Stage window = stage;
+        BorderPane borderPane = new BorderPane();
+        borderPane.setLeft(createLeftPane());
+        borderPane.setCenter(createMiddlePane());
+        borderPane.setRight(createRightPane());
+        borderPane.setBottom(createBottomPane());
+        Scene scene = new Scene(
+                borderPane,
+                Consts.APP_WIDTH + 50, Consts.APP_HEIGHT);
+        scene.getStylesheets().add("/stylesheet.css");
+        window.setScene(scene);
+        window.setTitle(Consts.APPLICATION_TITLE + " Manage project");
+        window.show();
     }
 
 
@@ -171,7 +151,6 @@ public class ManageProjectScene {
 
 
 
-
     /**
      * CheckBoxes populated with the project 'name' field from MongoDB
      * @see DBController#selectRecords()
@@ -199,16 +178,22 @@ public class ManageProjectScene {
 
 
 
+    private Project selectedProject() {
+        for(CheckBox checkBox : checkBoxList) {
+            checkBox.setOnAction(event -> {
+                projectName =  checkBox.getText();
+            });
+        }
 
 
-    private void selectedProject() {
-        String name = getProjectName();
         // read the checkbox selected project from the db
-        Project project = DBController.getInstance().readProjectDetails(name);
+        Project project = DBController.getInstance().readProjectDetails(projectName);
 
         selectedProjectName = project.getName();
         selectedProjectClient = project.getClientName();
         selectedProjectFee = project.getFee();
+
+        return project;
     }
 
 
@@ -217,9 +202,9 @@ public class ManageProjectScene {
 
         double newFee =  updateFeeDialog();
 
-        Controller.getInstance().createInvoice(selectedProjectName, selectedProjectClient, selectedProjectFee);
+        Controller.getInstance().createInvoice(projectName, selectedProjectClient, selectedProjectFee);
 
-        Controller.getInstance().editBilling(selectedProjectName, selectedProjectClient, newFee);
+        Controller.getInstance().editBilling(projectName, selectedProjectClient, newFee);
 
         DBController.getInstance().updateProjectFee(selectedProjectFee, newFee);
 
@@ -362,8 +347,4 @@ public class ManageProjectScene {
 
         return anchorPane;
     }
-
-
-
-
 }

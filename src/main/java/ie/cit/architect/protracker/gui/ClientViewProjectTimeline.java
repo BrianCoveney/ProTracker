@@ -46,8 +46,11 @@ public class ClientViewProjectTimeline
 
     private Pane createProjectTimeline()
     {
+        ViewProjectTimeline viewProjectTimeline = new ViewProjectTimeline();
+        String name = viewProjectTimeline.getProjectName();
+
         Group rootGroup = new Group();
-        String projName = ViewProjectTimeline.getClientProjName();
+        String projName = name;
         Label Title = new Label();
         if(projName == null)
         {

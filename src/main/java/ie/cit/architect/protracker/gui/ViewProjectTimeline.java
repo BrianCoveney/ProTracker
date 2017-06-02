@@ -38,15 +38,13 @@ public class ViewProjectTimeline {
     private static String cName;
     private static double cFee;
 
-    private static String projectName;
-
-    private String projName;
+    private String projectName;
     private String projClientName;
+    private double projectFee;
     private double yValueDesignFee;
     private double yValuePlanningFee;
     private double yValueTenderFee;
     private double yValueConstructionFee;
-    private double projFee;
     private Mediator mediator;
 
     public ViewProjectTimeline(Mediator mediator) {
@@ -54,71 +52,6 @@ public class ViewProjectTimeline {
     }
 
     public ViewProjectTimeline(){}
-
-
-
-
-    public void start(Stage stage) {
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setBottom(createBottomPaneTimLine());
-        borderPane.setCenter(createBarChart());
-        borderPane.setLeft(createLeftBillingPane());
-        borderPane.getStyleClass().add("border_pane");
-        Scene scene = new Scene(borderPane,  Consts.APP_WIDTH, Consts.APP_HEIGHT);
-        scene.getStylesheets().add("/stylesheet.css");
-        stage.setScene(scene);
-        stage.setTitle(Consts.APPLICATION_TITLE + " View Stage");
-        stage.show();
-    }
-
-
-
-
-
-    private VBox createLeftBillingPane()
-    {
-        VBox vBox = new VBox();
-        Button buttonDesign = new Button("Design Invoice");
-        Button buttonPlanning = new Button("Planning Invoice");
-        Button buttonTender = new Button("Tender Invoice");
-        Button buttonConstruction = new Button("Construction Invoice");
-
-        List<Button> buttonList = new ArrayList<>(Arrays.asList(buttonDesign, buttonPlanning, buttonTender, buttonConstruction));
-        for(Button button : buttonList) {
-            button.setMinWidth(175);
-        }
-
-        buttonDesign.setOnAction(event -> {
-            setAdjustPath("Design");
-            setClientProjDetails(projName, projClientName, yValueDesignFee);
-            createInvoice(projName, projClientName, yValueDesignFee);
-        });
-
-        buttonPlanning.setOnAction(event -> {
-            setAdjustPath("Planning");
-            setClientProjDetails(projName, projClientName, yValuePlanningFee);
-            createInvoice(projName, projClientName, yValuePlanningFee);
-        });
-        buttonTender.setOnAction(event -> {
-            setAdjustPath("Tender");
-            setClientProjDetails(projName, projClientName, yValueTenderFee);
-            createInvoice(projName, projClientName, yValueTenderFee);
-        });
-        buttonConstruction.setOnAction(event -> {
-            setAdjustPath("Construction");
-            setClientProjDetails(projName, projClientName, yValueConstructionFee);
-            createInvoice(projName, projClientName, yValueConstructionFee);
-        });
-
-        VBox.setMargin(buttonDesign, new Insets(100, 37.5, 0, 37.5));
-        VBox.setMargin(buttonPlanning, new Insets(30, 37.5, 0, 37.5));
-        VBox.setMargin(buttonTender, new Insets(30, 37.5, 0, 37.5));
-        VBox.setMargin(buttonConstruction, new Insets(30, 37.5, 0, 37.5));
-        vBox.getChildren().addAll(buttonDesign, buttonPlanning, buttonTender, buttonConstruction);
-        return vBox;
-    }
-
 
 
     public String getProjectName() {
@@ -132,18 +65,13 @@ public class ViewProjectTimeline {
 
     private Group createBarChart() {
 
-        System.out.println(getProjectName());
 
         //** find the project in the database using the project name
-        Project project = DBController.getInstance()
-                .readProjectDetails(getProjectName());
+        Project project = DBController.getInstance().readProjectDetails(getProjectName());
 
-        if(project != null) {
-            projName = project.getName();
-            // this 'find' will also return the full mongo document associated with the project name
-            projFee = project.getFee();
-            projClientName = project.getClientName();
-        }
+        projectFee = project.getFee();
+        projClientName = project.getClientName();
+
 
         // define the X Axis
         CategoryAxis xAxis = new CategoryAxis();
@@ -153,8 +81,8 @@ public class ViewProjectTimeline {
 
 
         int lowerBound = 0;
-        double upperBound = projFee / 2;
-        double unitTick = projFee / 10;
+        double upperBound = projectFee / 2;
+        double unitTick = projectFee / 10;
 
 
         // define the Y Axis
@@ -162,11 +90,9 @@ public class ViewProjectTimeline {
         yAxis.setLabel("Fee");
 
 
-
-
         // create the Bar chart
         BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
-        barChart.setTitle("Project: " + projectName + " | Fee: " + projFee + " | Client: " +  projClientName);
+        barChart.setTitle("Project: " + project.getName() + " | Fee: " + projectFee + " | Client: " +  project.getClientName());
 
 
         //Prepare XYChart.Series
@@ -181,13 +107,10 @@ public class ViewProjectTimeline {
         series4.setName(Consts.CONSTRUCTION);
 
 
-        yValueDesignFee = projFee * 0.4;
-        yValuePlanningFee = projFee * 0.2;
-        yValueTenderFee = projFee * 0.1;
-        yValueConstructionFee = projFee * 0.3;
-
-
-
+        yValueDesignFee = projectFee * 0.4;
+        yValuePlanningFee = projectFee * 0.2;
+        yValueTenderFee = projectFee * 0.1;
+        yValueConstructionFee = projectFee * 0.3;
 
 
 
@@ -218,6 +141,67 @@ public class ViewProjectTimeline {
         Group groupBarChart = new Group(barChart);
 
         return groupBarChart;
+    }
+
+
+
+    public void start(Stage stage) {
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setBottom(createBottomPaneTimLine());
+        borderPane.setCenter(createBarChart());
+        borderPane.setLeft(createLeftBillingPane());
+        borderPane.getStyleClass().add("border_pane");
+        Scene scene = new Scene(borderPane,  Consts.APP_WIDTH, Consts.APP_HEIGHT);
+        scene.getStylesheets().add("/stylesheet.css");
+        stage.setScene(scene);
+        stage.setTitle(Consts.APPLICATION_TITLE + " View Stage");
+        stage.show();
+    }
+
+
+
+    private VBox createLeftBillingPane()
+    {
+        VBox vBox = new VBox();
+        Button buttonDesign = new Button("Design Invoice");
+        Button buttonPlanning = new Button("Planning Invoice");
+        Button buttonTender = new Button("Tender Invoice");
+        Button buttonConstruction = new Button("Construction Invoice");
+
+        List<Button> buttonList = new ArrayList<>(Arrays.asList(buttonDesign, buttonPlanning, buttonTender, buttonConstruction));
+        for(Button button : buttonList) {
+            button.setMinWidth(175);
+        }
+
+        buttonDesign.setOnAction(event -> {
+            setAdjustPath("Design");
+            setClientProjDetails(projectName, projClientName, yValueDesignFee);
+            createInvoice(projectName, projClientName, yValueDesignFee);
+        });
+
+        buttonPlanning.setOnAction(event -> {
+            setAdjustPath("Planning");
+            setClientProjDetails(projectName, projClientName, yValuePlanningFee);
+            createInvoice(projectName, projClientName, yValuePlanningFee);
+        });
+        buttonTender.setOnAction(event -> {
+            setAdjustPath("Tender");
+            setClientProjDetails(projectName, projClientName, yValueTenderFee);
+            createInvoice(projectName, projClientName, yValueTenderFee);
+        });
+        buttonConstruction.setOnAction(event -> {
+            setAdjustPath("Construction");
+            setClientProjDetails(projectName, projClientName, yValueConstructionFee);
+            createInvoice(projectName, projClientName, yValueConstructionFee);
+        });
+
+        VBox.setMargin(buttonDesign, new Insets(100, 37.5, 0, 37.5));
+        VBox.setMargin(buttonPlanning, new Insets(30, 37.5, 0, 37.5));
+        VBox.setMargin(buttonTender, new Insets(30, 37.5, 0, 37.5));
+        VBox.setMargin(buttonConstruction, new Insets(30, 37.5, 0, 37.5));
+        vBox.getChildren().addAll(buttonDesign, buttonPlanning, buttonTender, buttonConstruction);
+        return vBox;
     }
 
 
@@ -269,6 +253,7 @@ public class ViewProjectTimeline {
         cName = n;
         cFee = f;
     }
+
     public static String getClientProjName()
     {
         return pName;
