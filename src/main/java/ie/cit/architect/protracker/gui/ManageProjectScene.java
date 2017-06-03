@@ -185,7 +185,6 @@ public class ManageProjectScene {
             });
         }
 
-
         // read the checkbox selected project from the db
         Project project = DBController.getInstance().readProjectDetails(projectName);
 

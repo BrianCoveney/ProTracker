@@ -21,6 +21,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -33,14 +35,10 @@ import java.util.List;
  */
 public class ViewProjectTimeline {
 
-    private static String stage;
-    private static String pName;
-    private static String cName;
-    private static double cFee;
+    private static String projectStage;
 
     private String projectName;
     private String projClientName;
-    private double projectFee;
     private double yValueDesignFee;
     private double yValuePlanningFee;
     private double yValueTenderFee;
@@ -53,7 +51,6 @@ public class ViewProjectTimeline {
 
     public ViewProjectTimeline(){}
 
-
     public String getProjectName() {
         return projectName;
     }
@@ -63,14 +60,16 @@ public class ViewProjectTimeline {
     }
 
 
-    private Group createBarChart() {
 
+    private Group createBarChart() {
 
         //** find the project in the database using the project name
         Project project = DBController.getInstance().readProjectDetails(getProjectName());
 
-        projectFee = project.getFee();
+        double projectFee = project.getFee();
         projClientName = project.getClientName();
+
+        mediator.passProjectNameToClientBilling(getProjectName());
 
 
         // define the X Axis
@@ -146,7 +145,6 @@ public class ViewProjectTimeline {
 
 
     public void start(Stage stage) {
-
         BorderPane borderPane = new BorderPane();
         borderPane.setBottom(createBottomPaneTimLine());
         borderPane.setCenter(createBarChart());
@@ -160,9 +158,7 @@ public class ViewProjectTimeline {
     }
 
 
-
-    private VBox createLeftBillingPane()
-    {
+    private VBox createLeftBillingPane() {
         VBox vBox = new VBox();
         Button buttonDesign = new Button("Design Invoice");
         Button buttonPlanning = new Button("Planning Invoice");
@@ -176,23 +172,19 @@ public class ViewProjectTimeline {
 
         buttonDesign.setOnAction(event -> {
             setAdjustPath("Design");
-            setClientProjDetails(projectName, projClientName, yValueDesignFee);
             createInvoice(projectName, projClientName, yValueDesignFee);
         });
 
         buttonPlanning.setOnAction(event -> {
             setAdjustPath("Planning");
-            setClientProjDetails(projectName, projClientName, yValuePlanningFee);
             createInvoice(projectName, projClientName, yValuePlanningFee);
         });
         buttonTender.setOnAction(event -> {
             setAdjustPath("Tender");
-            setClientProjDetails(projectName, projClientName, yValueTenderFee);
             createInvoice(projectName, projClientName, yValueTenderFee);
         });
         buttonConstruction.setOnAction(event -> {
             setAdjustPath("Construction");
-            setClientProjDetails(projectName, projClientName, yValueConstructionFee);
             createInvoice(projectName, projClientName, yValueConstructionFee);
         });
 
@@ -206,14 +198,27 @@ public class ViewProjectTimeline {
 
 
 
-    private void createInvoice(String name, String client, double fee) {
 
+    private void setAdjustPath(String projectStage)
+    {
+        ViewProjectTimeline.projectStage = projectStage;
+    }
+
+
+    /**
+     * @see ClientViewProjectTimeline#generatePathTransition(Shape, Path)
+     */
+    public static String getAdjustPath() {
+        return projectStage;
+    }
+
+
+    private void createInvoice(String name, String client, double fee) {
         Controller.getInstance().createDesignInvoice(name, client, fee);
     }
 
 
     private AnchorPane createBottomPaneTimLine() {
-
         Button buttonContinue = new Button("Continue");
         buttonContinue.setOnAction(event -> {
             mediator.changeToArchitectMenuScene();
@@ -236,34 +241,4 @@ public class ViewProjectTimeline {
         return anchorPane;
     }
 
-
-    public void setAdjustPath(String s)
-    {
-        stage = s;
-    }
-
-    public static String getAdjustPath()
-    {
-        return stage;
-    }
-
-    public void setClientProjDetails(String p, String n, double f)
-    {
-        pName = p;
-        cName = n;
-        cFee = f;
-    }
-
-    public static String getClientProjName()
-    {
-        return pName;
-    }
-    public static String getClientName()
-    {
-        return cName;
-    }
-    public static Double getClientProjFee()
-    {
-        return cFee;
-    }
 }
