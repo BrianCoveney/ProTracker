@@ -1,11 +1,13 @@
 package ie.cit.architect.protracker.gui;
 
-import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.controller.DBController;
 import ie.cit.architect.protracker.helpers.Consts;
 import ie.cit.architect.protracker.model.ChatMessage;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,26 +24,26 @@ import javafx.stage.Stage;
 public class ViewMessagesScene {
 
 
-    private Mediator mediator;
+    /**
+     * Redesign of scene swapping. I had been using the Mediator, but this
+     * requires the start(...) method to be in each class.
+     * I've refactored the design so that each individual component are
+     * not application sub classes, but just plain old regular classes.
+     * @link { https://stackoverflow.com/a/32465949/5942254 }
+     */
+    private BorderPane view;
 
-    public ViewMessagesScene(Mediator mediator) {
-        this.mediator = mediator;
+    public ViewMessagesScene() {
+        view = new BorderPane();
+        view.setTop(homeButtonContainer());
+        view.setCenter(MessagesPane());
+        view.setBottom(createBottomPane());
     }
 
-    public void start(Stage stage) {
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(homeButtonContainer());
-        borderPane.setCenter(MessagesPane());
-        borderPane.setBottom(createBottomPane());
-
-        Scene scene = new Scene(borderPane, Consts.APP_WIDTH, Consts.APP_HEIGHT);
-
-        scene.getStylesheets().add("/stylesheet.css");
-        stage.setScene(scene);
-        stage.setTitle(Consts.APPLICATION_TITLE + " View Messages");
-        stage.show();
+    public Parent getView() {
+        return view;
     }
+
 
     private Pane MessagesPane() {
         BorderPane pane = new BorderPane();
@@ -50,8 +52,9 @@ public class ViewMessagesScene {
         return pane;
     }
 
-    private VBox createLeftPane()
-    {
+
+
+    private VBox createLeftPane() {
         VBox vBox = new VBox();
         vBox.setMinWidth(Consts.PANE_WIDTH);
 
@@ -104,10 +107,9 @@ public class ViewMessagesScene {
         });
 
 
-
-        VBox.setMargin(label, new Insets(30,0,0,40));
-        VBox.setMargin(textArea, new Insets(0,0,0,40));
-        VBox.setMargin(sendButton, new Insets(0,0,0,40));
+        VBox.setMargin(label, new Insets(30, 0, 0, 40));
+        VBox.setMargin(textArea, new Insets(0, 0, 0, 40));
+        VBox.setMargin(sendButton, new Insets(0, 0, 0, 40));
 
 
         vBox.getChildren().addAll(label, textArea, sendButton);
@@ -124,7 +126,11 @@ public class ViewMessagesScene {
 
         buttonHome.setOnAction(event -> {
             try {
-                mediator.changeToArchitectMenuScene();
+
+                changeToArchitectMenu(buttonHome);
+
+                closePreviousStage(event);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -153,11 +159,15 @@ public class ViewMessagesScene {
 
         Button buttonContinue = new Button("Continue");
         buttonContinue.setOnAction(event -> {
-            System.out.println("hello");
+            changeToArchitectMenu(buttonContinue);
+            closePreviousStage(event);
         });
 
         Button buttonCancel = new Button("Cancel");
-        buttonCancel.setOnAction(event -> mediator.changeToArchitectMenuScene());
+        buttonCancel.setOnAction(event -> {
+            changeToArchitectMenu(buttonCancel);
+            closePreviousStage(event);
+        });
 
         // layout
         AnchorPane anchorPane = new AnchorPane();
@@ -172,5 +182,25 @@ public class ViewMessagesScene {
 
         return anchorPane;
     }
+
+
+    private void changeToArchitectMenu(Button button) {
+        Parent view = new ArchitectMenuScene().getView();
+        Scene scene = new Scene(view, Consts.APP_WIDTH, Consts.APP_HEIGHT);
+        scene.getStylesheets().add("/stylesheet.css");
+        Stage stage = new Stage();
+        stage.initOwner(button.getScene().getWindow());
+        stage.setTitle(Consts.APPLICATION_TITLE + " View Messages");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
+    private void closePreviousStage(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        Stage stagePrev = (Stage) source.getScene().getWindow();
+        stagePrev.close();
+    }
+
 
 }

@@ -30,7 +30,6 @@ public class ManageProjectScene {
     private String projectName, selectedProjectName, selectedProjectClient;
     private double selectedProjectFee, doubleDialogInput;
     private static final String FILE_SEP = File.separator;
-    private static final String DOUBLE_FILE_SEP = FILE_SEP + FILE_SEP;
     private static final String PATH_TO_DESKTOP = System.getProperty("user.home") + FILE_SEP + "Desktop" + FILE_SEP;
     private VBox vBoxMiddlePane;
     private ObservableList<CheckBox> checkBoxList;

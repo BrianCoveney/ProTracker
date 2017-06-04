@@ -19,7 +19,6 @@ public class Mediator extends Application {
     private ArchitectMenuScene architectMenuScene;
     private ClientMenuScene clientMenuScene;
     private CreateNewProjectScene createNewProjectScene;
-    private ViewMessagesScene viewMessagesScene;
     private ManageProjectScene manageProjectScene;
     private NavigationPane navigationPane;
     private CustomArchitectDialog customArchitectDialog;
@@ -62,7 +61,6 @@ public class Mediator extends Application {
         architectMenuScene = new ArchitectMenuScene(this);
         clientMenuScene = new ClientMenuScene(this);
         createNewProjectScene = new CreateNewProjectScene(this);
-        viewMessagesScene = new ViewMessagesScene(this);
         manageProjectScene = new ManageProjectScene(this);
         navigationPane = new NavigationPane(this);
         customArchitectDialog = new CustomArchitectDialog(this);
@@ -101,7 +99,7 @@ public class Mediator extends Application {
 
     public void changeToCreateProjectScene() { createNewProjectScene.start(primaryStage); }
 
-    public void changeToViewMessagesScene() { viewMessagesScene.start(primaryStage); }
+//    public void changeToViewMessagesScene() { viewMessagesScene.start(primaryStage); }
 
     public void changeToManageProjectScene() { manageProjectScene.start(primaryStage); }
 

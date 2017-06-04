@@ -1,7 +1,6 @@
 package ie.cit.architect.protracker.gui;
 
 import ie.cit.architect.protracker.App.Mediator;
-import ie.cit.architect.protracker.controller.Controller;
 import ie.cit.architect.protracker.controller.DBController;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -49,18 +48,18 @@ public class CustomArchitectDialog
 
         Platform.runLater(() -> {
 
-            if (!Controller.getInstance().isEmployeeUserEmailValid(emailTextField)) {
-                createEmailErrorDialog();
-                mediator.changeToArchitectCustomDialog();
-            }
-            else if(!Controller.getInstance().isUserPasswordValid(passwordTextField)) {
-                createPasswordErrorDialog();
-                mediator.changeToArchitectCustomDialog();
-            }
-            else {
+//            if (!Controller.getInstance().isEmployeeUserEmailValid(emailTextField)) {
+//                createEmailErrorDialog();
+//                mediator.changeToArchitectCustomDialog();
+//            }
+//            else if(!Controller.getInstance().isUserPasswordValid(passwordTextField)) {
+//                createPasswordErrorDialog();
+//                mediator.changeToArchitectCustomDialog();
+//            }
+//            else {
                 Platform.runLater(() -> addUserToDB());
                 mediator.changeToArchitectMenuScene();
-            }
+//            }
         });
     }
 

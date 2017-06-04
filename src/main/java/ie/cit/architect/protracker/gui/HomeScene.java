@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -19,6 +20,9 @@ import javafx.stage.Stage;
 public class HomeScene {
 
     private Mediator mediator;
+    private Button buttonBuilderScene;
+    private BorderPane view;
+
 
     // Composition - passing a reference of Mediator to HomeScene's constructor. Now HomeScene 'has-a' Mediator
     public HomeScene(Mediator mediator) {
@@ -36,6 +40,8 @@ public class HomeScene {
         stage.setTitle(Consts.APPLICATION_TITLE);
         stage.show();
     }
+
+
 
 
     private GridPane createHomeMenu() {
@@ -63,6 +69,9 @@ public class HomeScene {
         buttonSignInArchitect.setMinWidth(150);
 
 
+        buttonBuilderScene = new Button("Builder Menu");
+
+
 
 
 
@@ -78,10 +87,9 @@ public class HomeScene {
         gridPane.add(buttonSignInArchitect, 0, 6);
         GridPane.setHalignment(buttonSignInArchitect, HPos.CENTER);
 
+        gridPane.add(buttonBuilderScene, 0, 10);
+        GridPane.setHalignment(buttonBuilderScene, HPos.CENTER);
 
-//        //test
-//        gridPane.add(buttonMySQL, 0, 10);
-//        gridPane.add(buttonMongoDB, 1, 10);
 
 
 

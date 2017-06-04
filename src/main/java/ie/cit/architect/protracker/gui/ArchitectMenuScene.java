@@ -4,6 +4,7 @@ import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.helpers.Consts;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -23,19 +24,25 @@ import java.util.List;
 public class ArchitectMenuScene {
 
 
-    private Mediator mediator;
 
-    /**
-     * Each GUI class has a constructor that passes a Mediator object.
-     * Within this (and other GUI classes), this mediator reference will pass the selected stage
-     * back to the Mediator, which will in turn 'start' that stage.
-     * @see #architectMenu() -> ...mediator.changeToManageProjectScene();
-     * Reference:
-     * @link { http://stackoverflow.com/a/14168529/5942254 }
-     */
+    private BorderPane view;
+
+    public ArchitectMenuScene() {
+        view = new BorderPane();
+        view.setTop(homeButtonContainer());
+        view.setCenter(architectMenu());
+    }
+    public Parent getView() {
+        return view;
+    }
+
+
+    // TODO - remove the mediator for swapping scenes
+    private Mediator mediator;
     public ArchitectMenuScene(Mediator mediator) {
         this.mediator = mediator;
     }
+
 
 
     public void start(Stage stage) {
@@ -78,11 +85,12 @@ public class ArchitectMenuScene {
                 } else if (event.getSource().equals(btn2)) {
                     mediator.changeToManageProjectScene();
                 } else if (event.getSource().equals(btn3)) {
-                    mediator.changeToViewMessagesScene();
+
+                    changeToViewMessagesScene(btn3);
+
                 }
             });
         }
-
 
 
         Image imageLogo = new Image(this.getClass().getResource("/Protracker_big.png").toString());
@@ -121,5 +129,16 @@ public class ArchitectMenuScene {
         return anchorPane;
     }
 
+
+    private void changeToViewMessagesScene(Button button) {
+        Parent view = new ViewMessagesScene().getView();
+        Scene scene = new Scene(view, Consts.APP_WIDTH, Consts.APP_HEIGHT);
+        scene.getStylesheets().add("/stylesheet.css");
+        Stage stage = new Stage();
+        stage.initOwner(button.getScene().getWindow());
+        stage.setTitle(Consts.APPLICATION_TITLE + " View Messages");
+        stage.setScene(scene);
+        stage.show();
+    }
 
 }
