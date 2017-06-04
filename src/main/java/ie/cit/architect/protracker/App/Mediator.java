@@ -3,8 +3,10 @@ package ie.cit.architect.protracker.App;
 
 import com.sun.javafx.application.LauncherImpl;
 import ie.cit.architect.protracker.Preloader.preloader;
+import ie.cit.architect.protracker.controller.Controller;
 import ie.cit.architect.protracker.controller.DBController;
 import ie.cit.architect.protracker.gui.*;
+import ie.cit.architect.protracker.model.Project;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;
@@ -24,6 +26,7 @@ public class Mediator extends Application {
     private CustomArchitectDialog customArchitectDialog;
     private CustomClientDialog customClientDialog;
     private ViewProjectTimeline viewProjectTimeline;
+    private Controller controller;
     private ClientViewProjectTimeline clientViewProjectTimeline;
     private ClientMessages clientMessages;
     private ClientProjectStage clientProjectStage;
@@ -129,10 +132,16 @@ public class Mediator extends Application {
     public void changeToClientContact() throws Exception {clientContact.start(primaryStage);}
 
 
+
+    // passing values between scenes
+
     public void passProjectName(String projectName) {
         viewProjectTimeline.setProjectName(projectName);
     }
 
+    public void passProjectNameToClientBilling(String projectName) {
+        clientBilling.setProjectName(projectName);
+    }
 
 }
 

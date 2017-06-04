@@ -1,7 +1,9 @@
 package ie.cit.architect.protracker.gui;
 
 import ie.cit.architect.protracker.App.Mediator;
+import ie.cit.architect.protracker.controller.DBController;
 import ie.cit.architect.protracker.helpers.Consts;
+import ie.cit.architect.protracker.model.Project;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -17,7 +19,8 @@ import javafx.scene.web.WebView;
 import java.net.URL;
 
 /**
- * Created by Adam on 05/03/2017.
+ * Created by Adam on 05/03/2017
+ * Edited by Brian on 06/03/2017
  * Pdf Preview via PDF.js
  *
  * Please Note: the PDF viewer displays correctly on my Windows PC, but is not displaying on a Linux PC - adammanleykelly
@@ -25,10 +28,24 @@ import java.net.URL;
 public class ClientBilling
 {
     private Mediator mainMediator;
+    private ViewProjectTimeline viewProjectTimeline;
+    private String projectName;
+    private String projectClientName;
+    private double projectFee;
+
 
     public ClientBilling (Mediator mainMediator)
     {
         this.mainMediator = mainMediator;
+    }
+
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     public void start(Stage stage)
@@ -48,14 +65,14 @@ public class ClientBilling
 
     private Pane createClientBilling()
     {
-        //Account Details
-        String projName = ViewProjectTimeline.getClientProjName();
-        String name = ViewProjectTimeline.getClientName();
-        double fee = ViewProjectTimeline.getClientProjFee();
+        Project project = DBController.getInstance().readProjectDetails(getProjectName());
+        projectFee = project.getFee();
+        projectClientName = project.getClientName();
+
         Label status = new Label();
         status.setManaged(false);
         status.setVisible(false);
-        if(projName ==null && name ==null&& fee == 0.0)
+        if(getProjectName() ==null && projectClientName ==null&& projectFee == 0.0)
         {
             status.setText("The architect will update this space");
             status.setManaged(true);
@@ -63,21 +80,20 @@ public class ClientBilling
         }
 
         Label cName = new Label();
-        //System.out.println(stage);
         Label ainfo = new Label("Account Details");
         ainfo.setFont(new Font("Arial", 30));
 
-        cName.setText("Client Name: " + name);
-        Label pName = new Label ("Project Name: " + projName);
-        Label cFee = new Label("Currernt Fee: "+ fee);
+        cName.setText("Client Name: " + projectClientName);
+        Label pName = new Label ("Project Name: " + getProjectName());
+        Label cFee = new Label("Currernt Fee: "+ projectFee);
 
         VBox vb = new VBox(ainfo,status, cName, pName, cFee);
         vb.setSpacing(5);
         vb.setPadding(new Insets(10,0,0,10));
         vb.setAlignment(Pos.TOP_LEFT);
         vb.setId("whitebackground");
-        // Create our browser which contains the Google Map
 
+        // Create our browser which contains the Google Map
         ClientBilling.Browser browser = new ClientBilling.Browser();
 
         //we need a StackPane to customise our browser's size
@@ -171,22 +187,7 @@ public class ClientBilling
                 e.printStackTrace();
             }
         });
-/////
 
-/////
-       /* buttonSaveInvoice.setOnAction(event -> {
-            try {
-                try {
-                    PdfInvoice.getInstance().createPdfDocument();
-                    MessageBox.show("PdfInvoice Saved to Desktop", "Saved");
-                }catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });*/
         // layout
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.getStyleClass().add("anchorpane_color");
@@ -208,32 +209,6 @@ public class ClientBilling
         return anchorPane;
     }
 
-    /*private String getProject()
-    {
-        for(CheckBox checkBox : checkBoxList) {
-            checkBox.setOnAction(event -> {
-                projectName =  checkBox.getText();
-            });
-        }
-
-        return projectName;
-    }
-
-    String projName;
-    String projClientName;
-    double projFee;
-
-    String name = getProjectName();
-
-    //** find the project in the database using the project name
-    Project project = DBController.getInstance().readProjectDetails(name);
-    projName = project.getName();
-
-    // this 'find' will also return the full mongo document associated with the project name
-    projFee = project.getFee();
-    projClientName = project.getClientName();
-    //
-*/
     //Pdf Viewer via pdf.js
     public class Browser extends StackPane
     {

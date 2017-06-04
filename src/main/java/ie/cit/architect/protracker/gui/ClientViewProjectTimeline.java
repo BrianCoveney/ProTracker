@@ -21,17 +21,14 @@ import javafx.util.Duration;
 /**
  * Created by Adam on 04/03/2017.
  */
-public class ClientViewProjectTimeline
-{
+public class ClientViewProjectTimeline {
     private Mediator mainMediator;
 
-    public ClientViewProjectTimeline(Mediator mainMediator)
-    {
+    public ClientViewProjectTimeline(Mediator mainMediator) {
         this.mainMediator = mainMediator;
     }
 
-    public void start(Stage stage)
-    {
+    public void start(Stage stage) {
         BorderPane pane = new BorderPane();
         pane.setTop(homeButtonContainer());
         pane.setCenter(createProjectTimeline());
@@ -44,29 +41,25 @@ public class ClientViewProjectTimeline
         stage.show();
     }
 
-    private Pane createProjectTimeline()
-    {
+    private Pane createProjectTimeline() {
         ViewProjectTimeline viewProjectTimeline = new ViewProjectTimeline();
         String name = viewProjectTimeline.getProjectName();
 
         Group rootGroup = new Group();
         String projName = name;
         Label Title = new Label();
-        if(projName == null)
-        {
+        if (projName == null) {
             Title.setText("Project Timeline: The architect will update this space");
             Title.setFont(new Font("Arial", 30));
-        }
-        else
-        {
-            Title.setText("Project Timeline: " + projName );
+        } else {
+            Title.setText("Project Timeline: " + projName);
             Title.setFont(new Font("Arial", 30));
         }
 
-        VBox vb = new VBox(Title,rootGroup);
+        VBox vb = new VBox(Title, rootGroup);
         applyAnimation(rootGroup);
         vb.setSpacing(90);
-        vb.setPadding(new Insets(1,1,180,1));
+        vb.setPadding(new Insets(1, 1, 180, 1));
         vb.setAlignment(Pos.CENTER);
 
         BorderPane pane = new BorderPane();
@@ -80,37 +73,35 @@ public class ClientViewProjectTimeline
     //String stage = "Construction";
     //Adjustable path for shape per point on timeline
 
-    private Path generateStraightPath()
-    {
+    private Path generateStraightPath() {
         String stage = ViewProjectTimeline.getAdjustPath();
         final Path path = new Path();
-        path.getElements().add(new MoveTo(20,200));
-        if(stage=="Design")
-        {path.getElements().add(new LineTo(200,200));}
-        else if(stage =="Planning")
-        {path.getElements().add(new LineTo(400,200));}
-        else if(stage =="Tender")
-        {path.getElements().add(new LineTo(500,200));}
-        else if(stage =="Construction")
-        {path.getElements().add(new LineTo(600,200));}
-        else if(stage =="Completion")
-        {path.getElements().add(new LineTo(700,200));}
+        path.getElements().add(new MoveTo(20, 200));
+        if (stage == "Design") {
+            path.getElements().add(new LineTo(200, 200));
+        } else if (stage == "Planning") {
+            path.getElements().add(new LineTo(400, 200));
+        } else if (stage == "Tender") {
+            path.getElements().add(new LineTo(500, 200));
+        } else if (stage == "Construction") {
+            path.getElements().add(new LineTo(600, 200));
+        } else if (stage == "Completion") {
+            path.getElements().add(new LineTo(700, 200));
+        }
         path.setOpacity(1.0);
         return path;
     }
 
     //Underlying Straight Path
-    private Path generateStraightPath2()
-    {
+    private Path generateStraightPath2() {
         final Path path = new Path();
-        path.getElements().add(new MoveTo(20,200));
-        path.getElements().add(new LineTo(700,200));
+        path.getElements().add(new MoveTo(20, 200));
+        path.getElements().add(new LineTo(700, 200));
         path.setOpacity(1.0);
         return path;
     }
 
-    private PathTransition generatePathTransition(final Shape shape, final Path path)
-    {
+    private PathTransition generatePathTransition(final Shape shape, final Path path) {
         final PathTransition pathTransition = new PathTransition();
         pathTransition.setDuration(Duration.seconds(4.0));
         pathTransition.setDelay(Duration.seconds(0.5));
@@ -122,8 +113,7 @@ public class ClientViewProjectTimeline
         return pathTransition;
     }
 
-    private void applyAnimation(final Group group)
-    {
+    private void applyAnimation(final Group group) {
         final Circle circle = new Circle(20, 200, 10);
         circle.setFill(Color.BLUE);
         final Path path = generateStraightPath();
@@ -172,8 +162,7 @@ public class ClientViewProjectTimeline
         transition.play();
     }
 
-    public HBox homeButtonContainer()
-    {
+    public HBox homeButtonContainer() {
         Button buttonHome = new Button("Home");
 
         Image logo = new Image(this.getClass().getResource("/Protracker_big.png").toString());

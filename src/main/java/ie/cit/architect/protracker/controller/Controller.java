@@ -1,6 +1,7 @@
 package ie.cit.architect.protracker.controller;
 
 import ie.cit.architect.protracker.gui.ManageProjectScene;
+import ie.cit.architect.protracker.gui.ViewProjectTimeline;
 import ie.cit.architect.protracker.helpers.Consts;
 import ie.cit.architect.protracker.helpers.PdfInvoice;
 import ie.cit.architect.protracker.model.*;
@@ -15,6 +16,7 @@ public class Controller {
     private static Controller instance;
     private IProject project;
     private ManageProjectScene manageProjectScene;
+    private ViewProjectTimeline viewProjectTimeline;
 
 
 
