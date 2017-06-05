@@ -4,15 +4,16 @@ import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.controller.DBController;
 import ie.cit.architect.protracker.controller.PersistenceMode;
 import ie.cit.architect.protracker.helpers.Consts;
+import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -20,8 +21,7 @@ import javafx.stage.Stage;
 public class HomeScene {
 
     private Mediator mediator;
-    private Button buttonBuilderScene;
-    private BorderPane view;
+    private GridPane view;
 
 
     // Composition - passing a reference of Mediator to HomeScene's constructor. Now HomeScene 'has-a' Mediator
@@ -44,12 +44,24 @@ public class HomeScene {
 
 
 
-    private GridPane createHomeMenu() {
+    private void closePreviousStage(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        Stage stagePrev = (Stage) source.getScene().getWindow();
+        stagePrev.close();
+    }
 
+
+    private GridPane createHomeMenu() {
         Button buttonSignInClient = new Button("Sign in Client");
         Button buttonSignInArchitect = new Button("Sign in Architect");
-        buttonSignInClient.setOnAction(event -> mediator.changeToClientCustomDialog());
-        buttonSignInArchitect.setOnAction(event -> mediator.changeToArchitectCustomDialog());
+        buttonSignInClient.setOnAction(event -> {
+            mediator.changeToClientCustomDialog();
+//            closePreviousStage(event);
+        });
+        buttonSignInArchitect.setOnAction(event -> {
+            mediator.changeToArchitectCustomDialog();
+//            closePreviousStage(event);
+        });
 
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
@@ -63,17 +75,8 @@ public class HomeScene {
         //labelSubTitle.setId("Welcome");
         labelSubTitle.getStyleClass().add("label_subtitle");
 
-
-
         buttonSignInClient.setMinWidth(150);
         buttonSignInArchitect.setMinWidth(150);
-
-
-        buttonBuilderScene = new Button("Builder Menu");
-
-
-
-
 
         gridPane.add(iview1, 0, 1);
         GridPane.setHalignment(iview1, HPos.CENTER);
@@ -87,14 +90,7 @@ public class HomeScene {
         gridPane.add(buttonSignInArchitect, 0, 6);
         GridPane.setHalignment(buttonSignInArchitect, HPos.CENTER);
 
-        gridPane.add(buttonBuilderScene, 0, 10);
-        GridPane.setHalignment(buttonBuilderScene, HPos.CENTER);
-
-
-
-
         return gridPane;
     }
-
 
 }

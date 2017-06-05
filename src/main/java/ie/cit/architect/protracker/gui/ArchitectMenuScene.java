@@ -1,11 +1,12 @@
 package ie.cit.architect.protracker.gui;
 
 import ie.cit.architect.protracker.App.Mediator;
-import ie.cit.architect.protracker.helpers.Consts;
+import ie.cit.architect.protracker.helpers.SceneUtil;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,39 +25,24 @@ import java.util.List;
 public class ArchitectMenuScene {
 
 
-
     private BorderPane view;
+    private Mediator mediator;
+
 
     public ArchitectMenuScene() {
         view = new BorderPane();
         view.setTop(homeButtonContainer());
         view.setCenter(architectMenu());
+
     }
+
     public Parent getView() {
         return view;
     }
 
 
-    // TODO - remove the mediator for swapping scenes
-    private Mediator mediator;
-    public ArchitectMenuScene(Mediator mediator) {
-        this.mediator = mediator;
-    }
 
 
-
-    public void start(Stage stage) {
-
-        BorderPane pane = new BorderPane();
-        pane.setTop(homeButtonContainer());
-        pane.setCenter(architectMenu());
-
-        Scene scene = new Scene(pane, Consts.APP_WIDTH, Consts.APP_HEIGHT);
-        scene.getStylesheets().add("/stylesheet.css");
-        stage.setScene(scene);
-        stage.setTitle(Consts.APPLICATION_TITLE + " Architects Menu");
-        stage.show();
-    }
 
 
     private VBox architectMenu() {
@@ -81,13 +67,19 @@ public class ArchitectMenuScene {
         for (Button button : buttonList) {
             button.setOnAction(event -> {
                 if (event.getSource().equals(btn1)) {
-                    mediator.changeToCreateProjectScene();
-                } else if (event.getSource().equals(btn2)) {
-                    mediator.changeToManageProjectScene();
-                } else if (event.getSource().equals(btn3)) {
-
-                    changeToViewMessagesScene(btn3);
-
+                    Parent view = new CreateNewProjectScene().getView();
+                    SceneUtil.changeScene(view);
+                    closePreviousStage(event);
+                }
+                else if (event.getSource().equals(btn2)) {
+                    Parent view = new ManageProjectScene().getView();
+                    SceneUtil.changeScene(view);
+                    closePreviousStage(event);
+                }
+                else if (event.getSource().equals(btn3)) {
+                    Parent view = new ViewMessagesScene().getView();
+                    SceneUtil.changeScene(view);
+                    closePreviousStage(event);
                 }
             });
         }
@@ -108,6 +100,15 @@ public class ArchitectMenuScene {
         return vBox;
     }
 
+    private void closePreviousStage(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        Stage stagePrev = (Stage) source.getScene().getWindow();
+        stagePrev.close();
+    }
+
+
+
+
 
     public AnchorPane homeButtonContainer() {
 
@@ -116,7 +117,7 @@ public class ArchitectMenuScene {
         Button buttonHome = new Button("Log Out");
         buttonHome.setOnAction(event -> {
             try {
-                mediator.changeToHomeScene();
+                closePreviousStage(event);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -130,15 +131,7 @@ public class ArchitectMenuScene {
     }
 
 
-    private void changeToViewMessagesScene(Button button) {
-        Parent view = new ViewMessagesScene().getView();
-        Scene scene = new Scene(view, Consts.APP_WIDTH, Consts.APP_HEIGHT);
-        scene.getStylesheets().add("/stylesheet.css");
-        Stage stage = new Stage();
-        stage.initOwner(button.getScene().getWindow());
-        stage.setTitle(Consts.APPLICATION_TITLE + " View Messages");
-        stage.setScene(scene);
-        stage.show();
-    }
+
+
 
 }

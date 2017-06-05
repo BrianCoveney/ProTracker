@@ -1,5 +1,6 @@
 package ie.cit.architect.protracker.gui;
 
+import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.controller.DBController;
 import ie.cit.architect.protracker.helpers.Consts;
 import ie.cit.architect.protracker.model.ChatMessage;
@@ -32,6 +33,7 @@ public class ViewMessagesScene {
      * @link { https://stackoverflow.com/a/32465949/5942254 }
      */
     private BorderPane view;
+    private Mediator mediator;
 
     public ViewMessagesScene() {
         view = new BorderPane();
@@ -44,6 +46,10 @@ public class ViewMessagesScene {
         return view;
     }
 
+
+    public ViewMessagesScene(Mediator mediator) {
+        this.mediator = mediator;
+    }
 
     private Pane MessagesPane() {
         BorderPane pane = new BorderPane();

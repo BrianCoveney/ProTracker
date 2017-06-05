@@ -4,6 +4,7 @@ import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.controller.Controller;
 import ie.cit.architect.protracker.controller.DBController;
 import ie.cit.architect.protracker.helpers.Consts;
+import ie.cit.architect.protracker.helpers.SceneUtil;
 import ie.cit.architect.protracker.model.Project;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -11,7 +12,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -43,7 +45,6 @@ public class CreateNewProjectScene {
     private static final String DOUBLE_FILE_SEP = FILE_SEP + FILE_SEP;
     private static final String PATH_TO_DESKTOP = System.getProperty("user.home") + FILE_SEP + "Desktop" + FILE_SEP;
     private String subDirectory;
-
     private Double editDialogInput;
     private ArrayList<String> directoryArrayList = new ArrayList<>();
     private CheckBox[] checkboxList = new CheckBox[10];
@@ -56,28 +57,26 @@ public class CreateNewProjectScene {
     private double projectFee;
     private Project project;
     private Mediator mediator;
+    private BorderPane view;
+
+
+    public CreateNewProjectScene(){
+        view = new BorderPane();
+        view.setLeft(createLeftPane());
+        view.setCenter(createMiddlePane());
+        view.setRight(createRightPane());
+        view.setBottom(createBottomPane());
+    }
+
+    public Parent getView() {
+        return view;
+    }
 
 
     public CreateNewProjectScene(Mediator mediator) {
         this.mediator = mediator;
     }
 
-    public CreateNewProjectScene(){}
-
-
-    public void start(Stage stage) {
-
-        createCheckboxArray();
-
-        Scene scene = new Scene(
-                createContainer(createLeftPane(), createMiddlePane(), createRightPane(), createBottomPane()),
-                Consts.APP_WIDTH, Consts.APP_HEIGHT);
-
-        scene.getStylesheets().add("/stylesheet.css");
-        stage.setScene(scene);
-        stage.setTitle(Consts.APPLICATION_TITLE + " Create New");
-        stage.show();
-    }
 
     private void getUserInput() {
         projectName = tfProjectName.getText();
@@ -88,15 +87,6 @@ public class CreateNewProjectScene {
         projectFee = Double.parseDouble(tfProjectFee.getText());
     }
 
-
-    private static BorderPane createContainer(VBox vb1, VBox vb2, VBox vb3, AnchorPane ap) {
-        BorderPane borderPane = new BorderPane();
-        borderPane.setLeft(vb1);
-        borderPane.setCenter(vb2);
-        borderPane.setRight(vb3);
-        borderPane.setBottom(ap);
-        return borderPane;
-    }
 
     private VBox createLeftPane() {
         VBox vBox = new VBox();
@@ -160,6 +150,8 @@ public class CreateNewProjectScene {
         vBox.setMinWidth(Consts.PANE_WIDTH);
         Label label = new Label("Select folders to create:");
         vBox.getChildren().add(label);
+
+        createCheckboxArray();
 
         for (CheckBox checkBox : checkboxList) {
             checkBox.setOnAction(event -> removeDigits(event));
@@ -237,17 +229,28 @@ public class CreateNewProjectScene {
     }
 
 
+    private void closePreviousStage(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        Stage stagePrev = (Stage) source.getScene().getWindow();
+        stagePrev.close();
+    }
 
 
     private AnchorPane createBottomPane() {
 
         Button buttonContinue = new Button("Continue");
         buttonContinue.setOnAction(event -> {
-            mediator.changeToArchitectMenuScene();
+            Parent view = new ArchitectMenuScene().getView();
+            SceneUtil.changeScene(view);
+            closePreviousStage(event);
         });
 
         Button buttonCancel = new Button("Cancel");
-        buttonCancel.setOnAction(event -> mediator.changeToArchitectMenuScene());
+        buttonCancel.setOnAction(event -> {
+            Parent view = new ArchitectMenuScene().getView();
+            SceneUtil.changeScene(view);
+            closePreviousStage(event);
+        });
 
         // layout
         AnchorPane anchorPane = new AnchorPane();

@@ -20,7 +20,7 @@ import java.net.URL;
 
 /**
  * Created by Adam on 05/03/2017
- * Edited by Brian on 06/03/2017
+ * Edited by Brian on 05/06/2017
  * Pdf Preview via PDF.js
  *
  * Please Note: the PDF viewer displays correctly on my Windows PC, but is not displaying on a Linux PC - adammanleykelly
@@ -29,7 +29,7 @@ public class ClientBilling
 {
     private Mediator mainMediator;
     private ViewProjectTimeline viewProjectTimeline;
-    private String projectName;
+    private static String projectName;
     private String projectClientName;
     private double projectFee;
 
@@ -38,7 +38,6 @@ public class ClientBilling
     {
         this.mainMediator = mainMediator;
     }
-
 
     public String getProjectName() {
         return projectName;

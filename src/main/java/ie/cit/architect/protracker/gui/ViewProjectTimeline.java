@@ -4,6 +4,7 @@ import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.controller.Controller;
 import ie.cit.architect.protracker.controller.DBController;
 import ie.cit.architect.protracker.helpers.Consts;
+import ie.cit.architect.protracker.helpers.SceneUtil;
 import ie.cit.architect.protracker.model.Project;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -12,7 +13,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -37,19 +39,18 @@ public class ViewProjectTimeline {
 
     private static String projectStage;
 
-    private String projectName;
+    private static String projectName;
     private String projClientName;
     private double yValueDesignFee;
     private double yValuePlanningFee;
     private double yValueTenderFee;
     private double yValueConstructionFee;
     private Mediator mediator;
+    private BorderPane view;
 
     public ViewProjectTimeline(Mediator mediator) {
         this.mediator = mediator;
     }
-
-    public ViewProjectTimeline(){}
 
     public String getProjectName() {
         return projectName;
@@ -61,6 +62,20 @@ public class ViewProjectTimeline {
 
 
 
+    public ViewProjectTimeline(){
+        view = new BorderPane();
+        view.setBottom(createBottomPaneTimLine());
+        view.setCenter(createBarChart());
+        view.setLeft(createLeftBillingPane());
+    }
+
+    public Parent getView() {
+        return view;
+    }
+
+
+
+
     private Group createBarChart() {
 
         //** find the project in the database using the project name
@@ -69,6 +84,9 @@ public class ViewProjectTimeline {
         double projectFee = project.getFee();
         projClientName = project.getClientName();
 
+        Mediator mediator = new Mediator();
+        // Pass the selected project name to ClientBilling Scene,
+        // with help from the Mediator class
         mediator.passProjectNameToClientBilling(getProjectName());
 
 
@@ -143,21 +161,6 @@ public class ViewProjectTimeline {
     }
 
 
-
-    public void start(Stage stage) {
-        BorderPane borderPane = new BorderPane();
-        borderPane.setBottom(createBottomPaneTimLine());
-        borderPane.setCenter(createBarChart());
-        borderPane.setLeft(createLeftBillingPane());
-        borderPane.getStyleClass().add("border_pane");
-        Scene scene = new Scene(borderPane,  Consts.APP_WIDTH, Consts.APP_HEIGHT);
-        scene.getStylesheets().add("/stylesheet.css");
-        stage.setScene(scene);
-        stage.setTitle(Consts.APPLICATION_TITLE + " View Stage");
-        stage.show();
-    }
-
-
     private VBox createLeftBillingPane() {
         VBox vBox = new VBox();
         Button buttonDesign = new Button("Design Invoice");
@@ -218,14 +221,27 @@ public class ViewProjectTimeline {
     }
 
 
+    private void closePreviousStage(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        Stage stagePrev = (Stage) source.getScene().getWindow();
+        stagePrev.close();
+    }
+
     private AnchorPane createBottomPaneTimLine() {
         Button buttonContinue = new Button("Continue");
+
         buttonContinue.setOnAction(event -> {
-            mediator.changeToArchitectMenuScene();
+            Parent view = new ArchitectMenuScene().getView();
+            SceneUtil.changeScene(view);
+            closePreviousStage(event);
         });
 
         Button buttonCancel = new Button("Cancel");
-        buttonCancel.setOnAction(event -> mediator.changeToManageProjectScene());
+        buttonCancel.setOnAction(event -> {
+            Parent view = new ArchitectMenuScene().getView();
+            SceneUtil.changeScene(view);
+            closePreviousStage(event);
+        });;
 
         // layout
         AnchorPane anchorPane = new AnchorPane();

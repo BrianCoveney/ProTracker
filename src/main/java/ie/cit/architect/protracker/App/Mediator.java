@@ -6,7 +6,6 @@ import ie.cit.architect.protracker.Preloader.preloader;
 import ie.cit.architect.protracker.controller.Controller;
 import ie.cit.architect.protracker.controller.DBController;
 import ie.cit.architect.protracker.gui.*;
-import ie.cit.architect.protracker.model.Project;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.application.Preloader;
@@ -23,6 +22,7 @@ public class Mediator extends Application {
     private CreateNewProjectScene createNewProjectScene;
     private ManageProjectScene manageProjectScene;
     private NavigationPane navigationPane;
+    private ViewMessagesScene viewMessagesScene;
     private CustomArchitectDialog customArchitectDialog;
     private CustomClientDialog customClientDialog;
     private ViewProjectTimeline viewProjectTimeline;
@@ -61,7 +61,8 @@ public class Mediator extends Application {
     //  Swapping scenes. Ref: http://stackoverflow.com/a/14168529/5942254
     public Mediator(){
         homeMenuScene = new HomeScene(this);
-        architectMenuScene = new ArchitectMenuScene(this);
+        viewMessagesScene = new ViewMessagesScene(this);
+        architectMenuScene = new ArchitectMenuScene();
         clientMenuScene = new ClientMenuScene(this);
         createNewProjectScene = new CreateNewProjectScene(this);
         manageProjectScene = new ManageProjectScene(this);
@@ -86,31 +87,20 @@ public class Mediator extends Application {
         stage.getIcons().add(new Image(this.getClass().getResource("/icon.png").toString()));
         homeMenuScene.start(primaryStage); // default
 
-        // Database type (MongoDB / MySQL) selected in the controller
+        // start database connection
         Platform.runLater(() -> DBController.getInstance());
     }
 
 
-    // methods to change scene
-    public void changeToArchitectMenuScene(){
-        architectMenuScene.start(primaryStage);
-    }
 
     public void changeToClientMenuScene(){
         clientMenuScene.start(primaryStage);
     }
 
-    public void changeToCreateProjectScene() { createNewProjectScene.start(primaryStage); }
-
-//    public void changeToViewMessagesScene() { viewMessagesScene.start(primaryStage); }
-
-    public void changeToManageProjectScene() { manageProjectScene.start(primaryStage); }
-
     public void changeToArchitectCustomDialog() { customArchitectDialog.signInArchitectDialog(); }
 
     public void changeToClientCustomDialog() { customClientDialog.signInClientDialog(); }
 
-    public void changeToViewProjectTimeline() { viewProjectTimeline.start(primaryStage); }
 
     public void changeToHomeScene()  {
         try {

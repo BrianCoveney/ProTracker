@@ -2,8 +2,10 @@ package ie.cit.architect.protracker.gui;
 
 import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.controller.DBController;
+import ie.cit.architect.protracker.helpers.SceneUtil;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
@@ -16,8 +18,7 @@ import java.util.Optional;
 /**
  * Created by brian on 3/2/2017.
  */
-public class CustomArchitectDialog
-{
+public class CustomArchitectDialog {
 
     private Mediator mediator;
     private Dialog<Pair<String, String>> dialog;
@@ -46,7 +47,7 @@ public class CustomArchitectDialog
     // Otherwise open the Architect Menu Scene
     private void validateEmployeeCredentials() {
 
-        Platform.runLater(() -> {
+//        Platform.runLater(() -> {
 
 //            if (!Controller.getInstance().isEmployeeUserEmailValid(emailTextField)) {
 //                createEmailErrorDialog();
@@ -57,10 +58,16 @@ public class CustomArchitectDialog
 //                mediator.changeToArchitectCustomDialog();
 //            }
 //            else {
-                Platform.runLater(() -> addUserToDB());
-                mediator.changeToArchitectMenuScene();
-//            }
+        Platform.runLater(() -> addUserToDB());
+
+        Platform.runLater(() -> {
+            Parent view = new ArchitectMenuScene().getView();
+            SceneUtil.changeScene(view);
         });
+
+
+//            }
+//        });
     }
 
 
@@ -111,11 +118,10 @@ public class CustomArchitectDialog
         gridPane.getColumnConstraints().addAll(col1, col2);
 
 
-
         dialog.getDialogPane().setContent(gridPane);
 
         // colour the dialogs header
-        GridPane grid = (GridPane)dialog.getDialogPane().lookup(".header-panel");
+        GridPane grid = (GridPane) dialog.getDialogPane().lookup(".header-panel");
         grid.setStyle("-fx-background-color: white;");
 
         // Request focus on the username field by default.
@@ -130,7 +136,10 @@ public class CustomArchitectDialog
                 emailTextField = textFieldEmail.getText();
 
                 Button buttonLogin = (Button) dialog.getDialogPane().lookupButton(loginButtonType);
-                buttonLogin.setOnAction(event -> validateEmployeeCredentials());
+                buttonLogin.setOnAction(event -> {
+                    validateEmployeeCredentials();
+
+                });
 
 
                 return new Pair<>(emailTextField, passwordTextField);
@@ -151,11 +160,6 @@ public class CustomArchitectDialog
     }
 
 
-
-
-
-
-
     public Dialog createEmailErrorDialog() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Email Address Not Recognised!");
@@ -174,7 +178,6 @@ public class CustomArchitectDialog
         alert.showAndWait();
         return alert;
     }
-
 
 
 }

@@ -3,14 +3,16 @@ package ie.cit.architect.protracker.gui;
 import ie.cit.architect.protracker.App.Mediator;
 import ie.cit.architect.protracker.controller.Controller;
 import ie.cit.architect.protracker.controller.DBController;
-import ie.cit.architect.protracker.helpers.Consts;
+import ie.cit.architect.protracker.helpers.SceneUtil;
 import ie.cit.architect.protracker.model.Project;
 import ie.cit.architect.protracker.persistors.MongoDBPersistor;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -32,16 +34,29 @@ public class ManageProjectScene {
     private static final String FILE_SEP = File.separator;
     private static final String PATH_TO_DESKTOP = System.getProperty("user.home") + FILE_SEP + "Desktop" + FILE_SEP;
     private VBox vBoxMiddlePane;
-    private ObservableList<CheckBox> checkBoxList;
-    private ObservableList<Label> labelList;
+    private ObservableList<CheckBox> checkBoxList = FXCollections.observableArrayList();
+    private ObservableList<Label> labelList = FXCollections.observableArrayList();
     private Button buttonRename;
     private String editDialogInput;
+    private Button buttonContinue;
     private Mediator mediator;
+    private BorderPane view;
+
+
+    public ManageProjectScene() {
+        view = new BorderPane();
+        view.setLeft(createLeftPane());
+        view.setCenter(createMiddlePane());
+        view.setRight(createRightPane());
+        view.setBottom(createBottomPane());
+    }
+
+    public Parent getView() {
+        return view;
+    }
 
     public ManageProjectScene(Mediator mediator) {
         this.mediator = mediator;
-        checkBoxList = FXCollections.observableArrayList();
-        labelList = FXCollections.observableArrayList();
     }
 
 
@@ -61,12 +76,15 @@ public class ManageProjectScene {
         Button buttonViewStage = new Button("View Stage");
         buttonViewStage.setOnAction(event -> {
 
-            // using the mediator to pass a value between classes
-            // this removes the need for static class variables
+            Mediator mediator = new Mediator();
+
+            // Pass the selected project name to ViewTimeLine Scene,
+            // with help from the Mediator class
             mediator.passProjectName(getProjectName());
 
-            Platform.runLater(() ->{
-                mediator.changeToViewProjectTimeline();
+            Platform.runLater(() -> {
+                Parent view = new ViewProjectTimeline().getView();
+                SceneUtil.changeScene(view);
 
             });
         });
@@ -103,24 +121,6 @@ public class ManageProjectScene {
     }
 
 
-    public void start(Stage stage) {
-        Stage window = stage;
-        BorderPane borderPane = new BorderPane();
-        borderPane.setLeft(createLeftPane());
-        borderPane.setCenter(createMiddlePane());
-        borderPane.setRight(createRightPane());
-        borderPane.setBottom(createBottomPane());
-        Scene scene = new Scene(
-                borderPane,
-                Consts.APP_WIDTH + 50, Consts.APP_HEIGHT);
-        scene.getStylesheets().add("/stylesheet.css");
-        window.setScene(scene);
-        window.setTitle(Consts.APPLICATION_TITLE + " Manage project");
-        window.show();
-    }
-
-
-
     private ScrollPane createMiddlePane() {
 
         vBoxMiddlePane = new VBox();
@@ -149,16 +149,16 @@ public class ManageProjectScene {
     }
 
 
-
     /**
      * CheckBoxes populated with the project 'name' field from MongoDB
+     *
      * @see DBController#selectRecords()
      * @see MongoDBPersistor#createProjectList()
      */
     private void addProjectsToMiddlePane() {
         ArrayList<Project> projectArrayList = DBController.getInstance().selectRecords();
 
-        for(Project project : projectArrayList) {
+        for (Project project : projectArrayList) {
 
             CheckBox checkBox = new CheckBox(project.getName());
             checkBoxList.add(checkBox);
@@ -176,11 +176,10 @@ public class ManageProjectScene {
     }
 
 
-
     private Project selectedProject() {
-        for(CheckBox checkBox : checkBoxList) {
+        for (CheckBox checkBox : checkBoxList) {
             checkBox.setOnAction(event -> {
-                projectName =  checkBox.getText();
+                projectName = checkBox.getText();
             });
         }
 
@@ -195,10 +194,9 @@ public class ManageProjectScene {
     }
 
 
-
     private void editBilling() {
 
-        double newFee =  updateFeeDialog();
+        double newFee = updateFeeDialog();
 
         Controller.getInstance().createInvoice(projectName, selectedProjectClient, selectedProjectFee);
 
@@ -223,12 +221,11 @@ public class ManageProjectScene {
     }
 
 
-
     public Project getProjectByName() {
-        for(CheckBox checkBox : checkBoxList) {
+        for (CheckBox checkBox : checkBoxList) {
             checkBox.setOnAction(event -> {
 
-                projectName =  checkBox.getText();
+                projectName = checkBox.getText();
             });
         }
         Project project = new Project();
@@ -241,7 +238,7 @@ public class ManageProjectScene {
     private void removeControlsFromScrollPane() {
 
         for (int i = 0; i < checkBoxList.size(); i++) {
-            if(checkBoxList.get(i).isSelected()) {
+            if (checkBoxList.get(i).isSelected()) {
                 checkBoxList.get(i).setVisible(false);
                 checkBoxList.get(i).setManaged(false);
                 labelList.get(i).setVisible(false);
@@ -258,7 +255,7 @@ public class ManageProjectScene {
 
         Optional<String> result = dialog.showAndWait();
 
-        if(result.isPresent()) {
+        if (result.isPresent()) {
             editDialogInput = result.get();
         }
 
@@ -270,9 +267,9 @@ public class ManageProjectScene {
 
 
     // Update
-    private void editProjectName() { DBController.getInstance().updateProjectName(getProjectName(), editDialogInput); }
-
-
+    private void editProjectName() {
+        DBController.getInstance().updateProjectName(getProjectName(), editDialogInput);
+    }
 
 
     // Delete
@@ -288,7 +285,7 @@ public class ManageProjectScene {
     private static boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            if(children != null) {
+            if (children != null) {
                 for (String aChildren : children) {
                     boolean success = deleteDir(new File(dir, aChildren));
                     if (!success) {
@@ -299,7 +296,6 @@ public class ManageProjectScene {
         }
         return dir.delete();
     }
-
 
 
     private VBox createLeftPane() {
@@ -313,7 +309,6 @@ public class ManageProjectScene {
         TextField textField = new TextField();
 
 
-
         VBox.setMargin(textField, new Insets(10, 10, 0, 10));
 
         vBox.getChildren().addAll(label, textField);
@@ -322,15 +317,28 @@ public class ManageProjectScene {
     }
 
 
+    private void closePreviousStage(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        Stage stagePrev = (Stage) source.getScene().getWindow();
+        stagePrev.close();
+    }
+
     private AnchorPane createBottomPane() {
 
-        Button buttonContinue = new Button("Continue");
+        buttonContinue = new Button("Continue");
+
         buttonContinue.setOnAction(event -> {
-            mediator.changeToArchitectMenuScene();
+            Parent view = new ArchitectMenuScene().getView();
+            SceneUtil.changeScene(view);
+            closePreviousStage(event);
         });
 
         Button buttonCancel = new Button("Cancel");
-        buttonCancel.setOnAction(event -> mediator.changeToArchitectMenuScene());
+        buttonCancel.setOnAction(event -> {
+            Parent view = new ArchitectMenuScene().getView();
+            SceneUtil.changeScene(view);
+            closePreviousStage(event);
+        });
 
         // layout
         AnchorPane anchorPane = new AnchorPane();
@@ -345,4 +353,6 @@ public class ManageProjectScene {
 
         return anchorPane;
     }
+
+
 }
